@@ -29,7 +29,7 @@ namespace ConsoleServer
 					);
 
 				app.Get(
-					"data/{x}/{y}",
+					"text/{x}/{y}",
 					req => req.Text(
 						string.Format("x={0}, y={1}",
 							req.RouteData.Values["x"],
