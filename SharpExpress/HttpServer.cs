@@ -110,27 +110,27 @@ namespace SharpExpress
 			var ctx = new HttpContextImpl(context.Request, context.Response);
 			var res = ctx.Response;
 
-			try
+			using (res.OutputStream)
 			{
-				if (!App.Process(ctx))
+				try
 				{
-					res.StatusCode = (int)HttpStatusCode.NotFound;
-					res.StatusDescription = "Not found";
+					if (!App.Process(ctx))
+					{
+						res.StatusCode = (int)HttpStatusCode.NotFound;
+						res.StatusDescription = "Not found";
+						res.ContentType = "text/plain";
+						res.Write("Resource not found!");
+					}
+				}
+				catch (Exception e)
+				{
+					Console.Error.WriteLine(e);
+
+					res.StatusCode = (int)HttpStatusCode.InternalServerError;
 					res.ContentType = "text/plain";
-					res.Write("Resource not found!");
+					res.Write(e.ToString());
 				}
 			}
-			catch (Exception e)
-			{
-				Console.Error.WriteLine(e);
-
-				res.StatusCode = (int)HttpStatusCode.InternalServerError;
-				res.ContentType = "text/plain";
-				res.Write(e.ToString());
-			}
-
-			res.Flush();
-			res.Close();
 		}
 	}
 }
