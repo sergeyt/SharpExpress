@@ -1,0 +1,11 @@
+bin
+obj
+build
+packages
+gh-pages
+.nuget
+
+*.suo
+*.user
+*.log
+*.nupkg
