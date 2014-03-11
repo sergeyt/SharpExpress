@@ -111,6 +111,11 @@ namespace SharpExpress
 
 		public override void Flush()
 		{
+			if (_output != null)
+			{
+				_output.Flush();
+			}
+
 			OutputStream.Flush();
 		}
 

@@ -130,6 +130,8 @@ namespace SharpExpress
 					res.ContentType = "text/plain";
 					res.Write(e.ToString());
 				}
+
+				res.Flush();
 			}
 		}
 	}
