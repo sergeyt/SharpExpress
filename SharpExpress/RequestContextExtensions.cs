@@ -10,8 +10,13 @@ namespace SharpExpress
 	{
 		public static void Text(this RequestContext req, string text)
 		{
+			Text(req, text, HttpStatusCode.OK);
+		}
+
+		public static void Text(this RequestContext req, string text, HttpStatusCode status)
+		{
 			var ctx = req.HttpContext;
-			ctx.Response.StatusCode = (int) HttpStatusCode.OK;
+			ctx.Response.StatusCode = (int) status;
 			ctx.Response.ContentType = "text/plain";
 			ctx.Response.Write(text);
 		}
@@ -49,19 +54,17 @@ namespace SharpExpress
 
 		public static void Error(this RequestContext req, string format, params object[] args)
 		{
-			var message = string.Format(format, args);
-			var ctx = req.HttpContext;
-			ctx.Response.StatusCode = (int) HttpStatusCode.InternalServerError;
-			ctx.Response.ContentType = "text/plain";
-			ctx.Response.Write(message);
+			Text(req, string.Format(format, args), HttpStatusCode.InternalServerError);
+		}
+
+		public static void NotFound(this RequestContext req)
+		{
+			NotFound(req, req.HttpContext.Request.Path);
 		}
 
 		public static void NotFound(this RequestContext req, string path)
 		{
-			var ctx = req.HttpContext;
-			ctx.Response.StatusCode = (int) HttpStatusCode.NotFound;
-			ctx.Response.ContentType = "text/plain";
-			ctx.Response.Output.Write("Resource '{0}' not found!", path);
+			Text(req, string.Format("Resource '{0}' not found!", path), HttpStatusCode.NotFound);
 		}
 	}
 }
