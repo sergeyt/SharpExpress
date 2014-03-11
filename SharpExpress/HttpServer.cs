@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Threading;
-using System.Web;
 
 namespace SharpExpress
 {
@@ -24,7 +23,7 @@ namespace SharpExpress
 			App = new ExpressApplication();
 
 			_listener.Prefixes.Add(string.Format(@"http://+:{0}/", port));
-			_listenerThread = new Thread(Consume);
+			_listenerThread = new Thread(Listen);
 			
 			_listener.Start();
 			_listenerThread.Start();
@@ -55,7 +54,7 @@ namespace SharpExpress
 			_listener.Close();
 		}
 
-		private void Consume()
+		private void Listen()
 		{
 			while (_listener.IsListening)
 			{
