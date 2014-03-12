@@ -20,27 +20,24 @@ namespace ConsoleServer
 				.ToDictionary(x => x.Key, x => x.Value, StringComparer.InvariantCultureIgnoreCase);
 
 			var app = new ExpressApplication();
-			app.Get(
-				"",
-				req => req.Text("Hi!")
+
+			app.Get("", req => req.Text("Hi!"))
+				.Get(
+					"text/{x}/{y}",
+					req => req.Text(
+						string.Format("x={0}, y={1}",
+							req.RouteData.Values["x"],
+							req.RouteData.Values["y"]))
+				)
+				.Get(
+					"json/{x}/{y}",
+					req => req.Json(
+						new
+						{
+							x = req.RouteData.Values["x"],
+							y = req.RouteData.Values["y"]
+						})
 				);
-
-			app.Get(
-				"text/{x}/{y}",
-				req => req.Text(
-					string.Format("x={0}, y={1}",
-						req.RouteData.Values["x"],
-						req.RouteData.Values["y"])
-					));
-
-			app.Get(
-				"json/{x}/{y}",
-				req => req.Json(
-					new
-					{
-						x = req.RouteData.Values["x"],
-						y = req.RouteData.Values["y"]
-					}));
 
 			var port = options.Get("port", 1111);
 			using (new HttpServer(app, port, 4))
