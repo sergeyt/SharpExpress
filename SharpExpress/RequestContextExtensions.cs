@@ -27,7 +27,7 @@ namespace SharpExpress
 
 			var ctx = req.HttpContext;
 			ctx.Response.StatusCode = (int) HttpStatusCode.OK;
-			ctx.Response.ContentType = "text/json";
+			ctx.Response.ContentType = "application/json";
 
 			var d = new {d = data};
 			var serializer = new JavaScriptSerializer();
