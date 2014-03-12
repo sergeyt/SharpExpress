@@ -9,7 +9,7 @@ namespace SharpExpress
 	/// <summary>
 	/// HTTP router inspired by express.js.
 	/// </summary>
-	public sealed class ExpressApplication : IHttpHandler
+	public class ExpressApplication : IHttpHandler
 	{
 		private static readonly RouteCollection EmptyRoutes = new RouteCollection();
 

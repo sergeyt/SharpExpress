@@ -12,15 +12,19 @@ namespace SharpExpress
 	{
 		private readonly HttpListener _listener = new HttpListener();
 		private readonly Thread _listenerThread;
-		private readonly Thread[] _workers = new Thread[8];
+		private readonly Thread[] _workers;
 		private readonly ManualResetEvent _stop = new ManualResetEvent(false);
 		private readonly ManualResetEvent _ready = new ManualResetEvent(false);
 		private readonly Queue<HttpListenerContext> _queue = new Queue<HttpListenerContext>();
+		private readonly ExpressApplication _app;
 
 		// TODO more settings
-		public HttpServer(int port)
+		public HttpServer(ExpressApplication app, int port, int workerCount)
 		{
-			App = new ExpressApplication();
+			if (app == null) throw new ArgumentNullException("app");
+			if (workerCount <= 0) throw new ArgumentOutOfRangeException("workerCount");
+
+			_app = app;
 
 			_listener.Prefixes.Add(string.Format(@"http://+:{0}/", port));
 			_listenerThread = new Thread(Listen);
@@ -28,15 +32,14 @@ namespace SharpExpress
 			_listener.Start();
 			_listenerThread.Start();
 
+			_workers = new Thread[workerCount];
 			for (int i = 0; i < _workers.Length; i++)
 			{
 				_workers[i] = new Thread(Worker);
 				_workers[i].Start();
 			}
 		}
-
-		public ExpressApplication App { get; private set; }
-
+		
 		public void Dispose()
 		{
 			Stop();
@@ -113,7 +116,7 @@ namespace SharpExpress
 			{
 				try
 				{
-					if (!App.Process(ctx))
+					if (!_app.Process(ctx))
 					{
 						res.StatusCode = (int)HttpStatusCode.NotFound;
 						res.StatusDescription = "Not found";
