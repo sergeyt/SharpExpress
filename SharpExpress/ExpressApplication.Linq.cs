@@ -2,15 +2,31 @@
 using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Text.RegularExpressions;
 using System.Web.Routing;
 
 namespace SharpExpress
 {
-	// TODO support funcs with 2-5 arguments
+	// TODO support default values for arguments
+
+	internal static class RouteDataExtensions
+	{
+		public static T Get<T>(this RouteData data, string name)
+		{
+			var val = data.Values[name];
+			return (T) Convert.ChangeType(val, typeof(T), CultureInfo.InvariantCulture);
+		}
+	}
 
 	// LINQ API
 	partial class ExpressApplication
 	{
+		private static string[] ParseRouteParams(string url)
+		{
+			var regex = new Regex(@"\{(?<p>[^\{]+)\}");
+			return (from Match m in regex.Matches(url) select m.Groups["p"].Value).ToArray();
+		}
+
 		private ExpressApplication Get<TResult>(string url,
 			Expression<Func<TResult>> expression,
 			Action<RequestContext, TResult> send)
@@ -28,10 +44,11 @@ namespace SharpExpress
 			});
 		}
 
-		private ExpressApplication Get<TResult, T1>(string url,
+		private ExpressApplication Get<T1, TResult>(string url,
 			Expression<Func<T1, TResult>> expression,
 			Action<RequestContext, TResult> send)
 		{
+			string[] p = null;
 			Func<T1, TResult> func = null;
 
 			return Get(url, req =>
@@ -39,11 +56,56 @@ namespace SharpExpress
 				if (func == null)
 				{
 					func = expression.Compile();
+					p = ParseRouteParams(url);
 				}
 
-				var value = req.RouteData.Values.Values.First();
-				var arg = (T1) Convert.ChangeType(value, typeof(T1), CultureInfo.InvariantCulture);
-				var result = func(arg);
+				var arg1 = req.RouteData.Get<T1>(p[0]);
+				var result = func(arg1);
+				send(req, result);
+			});
+		}
+
+		private ExpressApplication Get<T1, T2, TResult>(string url,
+			Expression<Func<T1, T2, TResult>> expression,
+			Action<RequestContext, TResult> send)
+		{
+			string[] p = null;
+			Func<T1, T2, TResult> func = null;
+
+			return Get(url, req =>
+			{
+				if (func == null)
+				{
+					func = expression.Compile();
+					p = ParseRouteParams(url);
+				}
+
+				var arg1 = req.RouteData.Get<T1>(p[0]);
+				var arg2 = req.RouteData.Get<T2>(p[1]);
+				var result = func(arg1, arg2);
+				send(req, result);
+			});
+		}
+
+		private ExpressApplication Get<T1, T2, T3, TResult>(string url,
+			Expression<Func<T1, T2, T3, TResult>> expression,
+			Action<RequestContext, TResult> send)
+		{
+			string[] p = null;
+			Func<T1, T2, T3, TResult> func = null;
+
+			return Get(url, req =>
+			{
+				if (func == null)
+				{
+					func = expression.Compile();
+					p = ParseRouteParams(url);
+				}
+
+				var arg1 = req.RouteData.Get<T1>(p[0]);
+				var arg2 = req.RouteData.Get<T2>(p[1]);
+				var arg3 = req.RouteData.Get<T3>(p[2]);
+				var result = func(arg1, arg2, arg3);
 				send(req, result);
 			});
 		}
@@ -58,12 +120,32 @@ namespace SharpExpress
 			return Get(url, expression, (req, res) => req.Json(res));
 		}
 
+		public ExpressApplication Json<T1, T2, TResult>(string url, Expression<Func<T1, T2, TResult>> expression)
+		{
+			return Get(url, expression, (req, res) => req.Json(res));
+		}
+
+		public ExpressApplication Json<T1, T2, T3, TResult>(string url, Expression<Func<T1, T2, T3, TResult>> expression)
+		{
+			return Get(url, expression, (req, res) => req.Json(res));
+		}
+
 		public ExpressApplication Xml<TResult>(string url, Expression<Func<TResult>> expression)
 		{
 			return Get(url, expression, (req, res) => req.Xml(res));
 		}
 
 		public ExpressApplication Xml<T1, TResult>(string url, Expression<Func<T1, TResult>> expression)
+		{
+			return Get(url, expression, (req, res) => req.Xml(res));
+		}
+
+		public ExpressApplication Xml<T1, T2, TResult>(string url, Expression<Func<T1, T2, TResult>> expression)
+		{
+			return Get(url, expression, (req, res) => req.Xml(res));
+		}
+
+		public ExpressApplication Xml<T1, T2, T3, TResult>(string url, Expression<Func<T1, T2, T3, TResult>> expression)
 		{
 			return Get(url, expression, (req, res) => req.Xml(res));
 		}
