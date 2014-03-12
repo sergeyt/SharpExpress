@@ -2,7 +2,22 @@
 
 Small HTTP server for .NET inspired by [express.js](http://expressjs.com/)
 
-## Example
+## Examples
+
+### Simple Static Server
+
+```c#
+var app = new ExpressApplication();
+app.Static("", Environment.CurrentDirectory);
+
+using (new HttpServer(app, 81, 4))
+{
+	Console.WriteLine("Listening port {0}. Press enter to stop the server.", port);
+	Console.ReadLine();
+}
+```
+
+### Routes API
 
 ```c#
 var app = new ExpressApplication();
@@ -37,11 +52,14 @@ using (var server = new HttpServer(app, port, workerCount))
 }
 ```
 
-### Simple Static Server
+### LINQ API
 
 ```c#
+Func<double, double> square = x => x * x;
+
 var app = new ExpressApplication();
-app.Static("", Environment.CurrentDirectory);
+app.Json<double,double>("math/json/square/{x}", x => square(x))
+   .Xml<double,double>("math/xml/square/{x}", x => square(x));
 
 using (new HttpServer(app, 81, 4))
 {
