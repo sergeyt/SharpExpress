@@ -22,7 +22,7 @@ namespace SharpExpress
 			var workerCount = options.Get("workers", 4);
 
 			var app = new ExpressApplication();
-			app.Static("", Environment.CurrentDirectory);
+			app.Static("{*url}", Environment.CurrentDirectory);
 
 			using (new HttpServer(app, port, workerCount))
 			{
