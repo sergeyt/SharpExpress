@@ -36,3 +36,16 @@ using (var server = new HttpServer(app, port, workerCount))
 	Console.ReadLine();
 }
 ```
+
+### Simple Static Server
+
+```c#
+var app = new ExpressApplication();
+app.Static("", Environment.CurrentDirectory);
+
+using (new HttpServer(app, 81, 4))
+{
+	Console.WriteLine("Listening port {0}. Press enter to stop the server.", port);
+	Console.ReadLine();
+}
+```
