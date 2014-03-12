@@ -10,7 +10,8 @@ Small HTTP server for .NET inspired by [express.js](http://expressjs.com/)
 var app = new ExpressApplication();
 app.Static("", Environment.CurrentDirectory);
 
-using (new HttpServer(app, 81, 4))
+var port = 81;
+using (new HttpServer(app, port, 4))
 {
 	Console.WriteLine("Listening port {0}. Press enter to stop the server.", port);
 	Console.ReadLine();
@@ -61,7 +62,8 @@ var app = new ExpressApplication();
 app.Json<double, double>("math/json/square/{x}", x => square(x))
    .Xml<double, double>("math/xml/square/{x}", x => square(x));
 
-using (new HttpServer(app, 81, 4))
+var port = 81;
+using (new HttpServer(app, port, 4))
 {
 	Console.WriteLine("Listening port {0}. Press enter to stop the server.", port);
 	Console.ReadLine();
