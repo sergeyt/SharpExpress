@@ -19,7 +19,10 @@ namespace ConsoleServer
 				select new KeyValuePair<string, string>(key, val))
 				.ToDictionary(x => x.Key, x => x.Value, StringComparer.InvariantCultureIgnoreCase);
 
+			
 			var app = new ExpressApplication();
+
+			Func<double, double> square = x => x * x;
 
 			app.Get("", req => req.Text("Hi!"))
 				.Get(
@@ -37,7 +40,10 @@ namespace ConsoleServer
 							x = req.RouteData.Values["x"],
 							y = req.RouteData.Values["y"]
 						})
-				);
+				)
+				// TODO deal with type inference
+				.Json<double, double>("math/json/square/{x}", x => square(x))
+				.Xml<double, double>("math/xml/square/{x}", x => square(x));
 
 			var port = options.Get("port", 1111);
 			using (new HttpServer(app, port, 4))

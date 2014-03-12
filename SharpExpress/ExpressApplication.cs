@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Routing;
@@ -9,14 +10,27 @@ namespace SharpExpress
 	/// <summary>
 	/// HTTP router inspired by express.js.
 	/// </summary>
-	public class ExpressApplication : IHttpHandler
+	public partial class ExpressApplication : IHttpHandler
 	{
+		private readonly IList<ExpressApplication> _handlers;
 		private static readonly RouteCollection EmptyRoutes = new RouteCollection();
+
+		public ExpressApplication()
+			: this(Enumerable.Empty<ExpressApplication>())
+		{
+		}
+
+		public ExpressApplication(IEnumerable<ExpressApplication> handlers)
+		{
+			_handlers = (handlers ?? Enumerable.Empty<ExpressApplication>()).ToList().AsReadOnly();
+		}
+
+		#region Routes API
 
 		private readonly IDictionary<string, RouteCollection> _routes =
 			new Dictionary<string, RouteCollection>(StringComparer.OrdinalIgnoreCase);
 
-		private ExpressApplication Register(string verb, string routeUrl, Action<RequestContext> handler)
+		private ExpressApplication Register(string verb, string url, Action<RequestContext> handler)
 		{
 			RouteCollection routes;
 			if (!_routes.TryGetValue(verb, out routes))
@@ -24,19 +38,23 @@ namespace SharpExpress
 				routes = new RouteCollection();
 				_routes.Add(verb, routes);
 			}
-			routes.Add(new Route(routeUrl, new RouteHandler(handler)));
+			routes.Add(new Route(url, new RouteHandler(handler)));
 			return this;
 		}
 
-		public ExpressApplication Get(string routeUrl, Action<RequestContext> handler)
+		public ExpressApplication Get(string url, Action<RequestContext> handler)
 		{
-			return Register("GET", routeUrl, handler);
+			return Register("GET", url, handler);
 		}
 
-		public ExpressApplication Post(string routeUrl, Action<RequestContext> handler)
+		public ExpressApplication Post(string url, Action<RequestContext> handler)
 		{
-			return Register("POST", routeUrl, handler);
+			return Register("POST", url, handler);
 		}
+
+		#endregion
+
+		#region IHttpHandler Impl
 
 		public bool Process(HttpContextBase context)
 		{
@@ -58,7 +76,7 @@ namespace SharpExpress
 				}
 			}
 
-			return false;
+			return _handlers.Any(x => x.Process(context));
 		}
 
 		public void ProcessRequest(HttpContext context)
@@ -86,6 +104,8 @@ namespace SharpExpress
 		{
 			get { return true; }
 		}
+
+		#endregion
 
 		#region class RouteHandler
 

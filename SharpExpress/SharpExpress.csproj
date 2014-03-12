@@ -51,6 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ExpressApplication.Linq.cs" />
     <Compile Include="RequestContextExtensions.cs" />
     <Compile Include="ExpressApplication.cs" />
     <Compile Include="HttpContextImpl.cs" />
