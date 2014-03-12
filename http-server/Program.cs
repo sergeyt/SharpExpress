@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using SharpExpress;
 
-namespace ConsoleServer
+namespace SharpExpress
 {
-	internal static class Program
+	static class Program
 	{
 		static void Main(string[] args)
 		{
@@ -19,31 +18,13 @@ namespace ConsoleServer
 				select new KeyValuePair<string, string>(key, val))
 				.ToDictionary(x => x.Key, x => x.Value, StringComparer.InvariantCultureIgnoreCase);
 
+			var port = options.Get("port", 80);
+			var workerCount = options.Get("workers", 4);
+
 			var app = new ExpressApplication();
-			app.Get(
-				"",
-				req => req.Text("Hi!")
-				);
+			app.Static("", Environment.CurrentDirectory);
 
-			app.Get(
-				"text/{x}/{y}",
-				req => req.Text(
-					string.Format("x={0}, y={1}",
-						req.RouteData.Values["x"],
-						req.RouteData.Values["y"])
-					));
-
-			app.Get(
-				"json/{x}/{y}",
-				req => req.Json(
-					new
-					{
-						x = req.RouteData.Values["x"],
-						y = req.RouteData.Values["y"]
-					}));
-
-			var port = options.Get("port", 1111);
-			using (new HttpServer(app, port, 4))
+			using (new HttpServer(app, port, workerCount))
 			{
 				Console.WriteLine("Listening port {0}. Press enter to stop the server.", port);
 				Console.ReadLine();

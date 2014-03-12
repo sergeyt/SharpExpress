@@ -4,11 +4,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("SharpExpress")]
-[assembly: AssemblyDescription("Small HTTP server")]
+[assembly: AssemblyTitle("http-server")]
+[assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("TsvBits")]
-[assembly: AssemblyProduct("SharpExpress")]
+[assembly: AssemblyProduct("http-server")]
 [assembly: AssemblyCopyright("Copyright © Sergey Todyshev 2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -19,7 +19,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("f9e613ad-f634-467b-99e6-2d88a44b060a")]
+[assembly: Guid("57bda269-e1b6-4c51-8f88-f7f3b2feec4d")]
 
 // Version information for an assembly consists of the following four values:
 //
