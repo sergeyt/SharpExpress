@@ -2,7 +2,7 @@
 <package>
 	<metadata>
 		<id>SharpExpress</id>
-		<version>0.1.0.0</version>
+		<version>0.2.0.0</version>
 		<authors>Sergey Todyshev (stodyshev@gmail.com)</authors>
 		<owners>Sergey Todyshev</owners>
 		<licenseUrl>http://opensource.org/licenses/MIT</licenseUrl>
