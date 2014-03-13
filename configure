@@ -1,0 +1,6 @@
+#!/bin/sh
+
+sudo apt-get install mono-devel mono-gmcs nunit nunit-console
+
+exit 0;
+

@@ -1,0 +1,12 @@
+/t:library
+-pkg:nunit
+/r:System.Xml.dll
+/r:System.Web.Abstractions.dll
+/r:System.Web.dll
+/r:System.Web.Extensions.dll
+/r:System.Web.Routing.dll
+/o+
+/define:NUNIT
+/recurse:SharpExpress/*.cs
+/out:SharpExpress.test.dll
+
