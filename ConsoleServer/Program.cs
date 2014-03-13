@@ -41,9 +41,8 @@ namespace ConsoleServer
 							y = req.RouteData.Values["y"]
 						})
 				)
-				// TODO deal with type inference
-				.Json<double, double>("math/json/square/{x}", x => square(x))
-				.Xml<double, double>("math/xml/square/{x}", x => square(x));
+				.Json("math/json/square/{x}", square)
+				.Xml("math/xml/square/{x}", square);
 
 			var port = options.Get("port", 1111);
 			using (new HttpServer(app, port, 4))

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Globalization;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 using System.Web.Routing;
 
@@ -27,59 +26,28 @@ namespace SharpExpress
 			return (from Match m in regex.Matches(url) select m.Groups["p"].Value).ToArray();
 		}
 
-		private ExpressApplication Get<TResult>(string url,
-			Expression<Func<TResult>> expression,
-			Action<RequestContext, TResult> send)
+		private ExpressApplication Get<TResult>(string url, Func<TResult> func, Action<RequestContext, TResult> send)
 		{
-			Func<TResult> func = null;
-
-			return Get(url, req =>
-			{
-				if (func == null)
-				{
-					func = expression.Compile();
-				}
-
-				send(req, func());
-			});
+			return Get(url, req => send(req, func()));
 		}
 
-		private ExpressApplication Get<T1, TResult>(string url,
-			Expression<Func<T1, TResult>> expression,
-			Action<RequestContext, TResult> send)
+		private ExpressApplication Get<T1, TResult>(string url, Func<T1, TResult> func, Action<RequestContext, TResult> send)
 		{
-			string[] p = null;
-			Func<T1, TResult> func = null;
-
+			var p = ParseRouteParams(url);
 			return Get(url, req =>
 			{
-				if (func == null)
-				{
-					func = expression.Compile();
-					p = ParseRouteParams(url);
-				}
-
 				var arg1 = req.RouteData.Get<T1>(p[0]);
 				var result = func(arg1);
 				send(req, result);
 			});
 		}
 
-		private ExpressApplication Get<T1, T2, TResult>(string url,
-			Expression<Func<T1, T2, TResult>> expression,
+		private ExpressApplication Get<T1, T2, TResult>(string url, Func<T1, T2, TResult> func,
 			Action<RequestContext, TResult> send)
 		{
-			string[] p = null;
-			Func<T1, T2, TResult> func = null;
-
+			var p = ParseRouteParams(url);
 			return Get(url, req =>
 			{
-				if (func == null)
-				{
-					func = expression.Compile();
-					p = ParseRouteParams(url);
-				}
-
 				var arg1 = req.RouteData.Get<T1>(p[0]);
 				var arg2 = req.RouteData.Get<T2>(p[1]);
 				var result = func(arg1, arg2);
@@ -87,21 +55,12 @@ namespace SharpExpress
 			});
 		}
 
-		private ExpressApplication Get<T1, T2, T3, TResult>(string url,
-			Expression<Func<T1, T2, T3, TResult>> expression,
+		private ExpressApplication Get<T1, T2, T3, TResult>(string url, Func<T1, T2, T3, TResult> func,
 			Action<RequestContext, TResult> send)
 		{
-			string[] p = null;
-			Func<T1, T2, T3, TResult> func = null;
-
+			var p = ParseRouteParams(url);
 			return Get(url, req =>
 			{
-				if (func == null)
-				{
-					func = expression.Compile();
-					p = ParseRouteParams(url);
-				}
-
 				var arg1 = req.RouteData.Get<T1>(p[0]);
 				var arg2 = req.RouteData.Get<T2>(p[1]);
 				var arg3 = req.RouteData.Get<T3>(p[2]);
@@ -110,44 +69,44 @@ namespace SharpExpress
 			});
 		}
 
-		public ExpressApplication Json<TResult>(string url, Expression<Func<TResult>> expression)
+		public ExpressApplication Json<TResult>(string url, Func<TResult> func)
 		{
-			return Get(url, expression, (req, res) => req.Json(res));
+			return Get(url, func, (req, res) => req.Json(res));
 		}
 
-		public ExpressApplication Json<T1, TResult>(string url, Expression<Func<T1, TResult>> expression)
+		public ExpressApplication Json<T1, TResult>(string url, Func<T1, TResult> func)
 		{
-			return Get(url, expression, (req, res) => req.Json(res));
+			return Get(url, func, (req, res) => req.Json(res));
 		}
 
-		public ExpressApplication Json<T1, T2, TResult>(string url, Expression<Func<T1, T2, TResult>> expression)
+		public ExpressApplication Json<T1, T2, TResult>(string url, Func<T1, T2, TResult> func)
 		{
-			return Get(url, expression, (req, res) => req.Json(res));
+			return Get(url, func, (req, res) => req.Json(res));
 		}
 
-		public ExpressApplication Json<T1, T2, T3, TResult>(string url, Expression<Func<T1, T2, T3, TResult>> expression)
+		public ExpressApplication Json<T1, T2, T3, TResult>(string url, Func<T1, T2, T3, TResult> func)
 		{
-			return Get(url, expression, (req, res) => req.Json(res));
+			return Get(url, func, (req, res) => req.Json(res));
 		}
 
-		public ExpressApplication Xml<TResult>(string url, Expression<Func<TResult>> expression)
+		public ExpressApplication Xml<TResult>(string url, Func<TResult> func)
 		{
-			return Get(url, expression, (req, res) => req.Xml(res));
+			return Get(url, func, (req, res) => req.Xml(res));
 		}
 
-		public ExpressApplication Xml<T1, TResult>(string url, Expression<Func<T1, TResult>> expression)
+		public ExpressApplication Xml<T1, TResult>(string url, Func<T1, TResult> func)
 		{
-			return Get(url, expression, (req, res) => req.Xml(res));
+			return Get(url, func, (req, res) => req.Xml(res));
 		}
 
-		public ExpressApplication Xml<T1, T2, TResult>(string url, Expression<Func<T1, T2, TResult>> expression)
+		public ExpressApplication Xml<T1, T2, TResult>(string url, Func<T1, T2, TResult> func)
 		{
-			return Get(url, expression, (req, res) => req.Xml(res));
+			return Get(url, func, (req, res) => req.Xml(res));
 		}
 
-		public ExpressApplication Xml<T1, T2, T3, TResult>(string url, Expression<Func<T1, T2, T3, TResult>> expression)
+		public ExpressApplication Xml<T1, T2, T3, TResult>(string url, Func<T1, T2, T3, TResult> func)
 		{
-			return Get(url, expression, (req, res) => req.Xml(res));
+			return Get(url, func, (req, res) => req.Xml(res));
 		}
 	}
 }
