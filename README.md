@@ -2,7 +2,14 @@
 
 # SharpExpress
 
-Small HTTP server for .NET inspired by [express.js](http://expressjs.com/)
+Simple HTTP routing for .NET inspired by [express.js](http://expressjs.com/)
+
+## Features
+* Lightweight library - now ~40kb
+* Built-in light http server
+* Based on .NET BCL only without external dependencies
+* Using System.Web.Routing for url routing
+* Compilable and runnable on Mono
 
 ## Examples
 
