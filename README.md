@@ -59,8 +59,8 @@ using (var server = new HttpServer(app, port, workerCount))
 Func<double, double> square = x => x * x;
 
 var app = new ExpressApplication();
-app.Json<double, double>("math/json/square/{x}", x => square(x))
-   .Xml<double, double>("math/xml/square/{x}", x => square(x));
+app.Json("math/json/square/{x}", square)
+   .Xml("math/xml/square/{x}", square);
 
 var port = 81;
 using (new HttpServer(app, port, 4))
