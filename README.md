@@ -1,3 +1,5 @@
+[![Build Status](https://drone.io/github.com/sergeyt/SharpExpress/status.png)](https://drone.io/github.com/sergeyt/SharpExpress/latest)
+
 # SharpExpress
 
 Small HTTP server for .NET inspired by [express.js](http://expressjs.com/)
