@@ -1,4 +1,5 @@
 [![Build Status](https://drone.io/github.com/sergeyt/SharpExpress/status.png)](https://drone.io/github.com/sergeyt/SharpExpress/latest)
+[![NuGet version](https://badge.fury.io/nu/SharpExpress.png)](http://badge.fury.io/nu/SharpExpress)
 
 # SharpExpress
 
