@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<package>
+	<metadata>
+		<id>SharpExpress</id>
+		<version>0.1.0.0</version>
+		<authors>Sergey Todyshev (stodyshev@gmail.com)</authors>
+		<owners>Sergey Todyshev</owners>
+		<licenseUrl>http://opensource.org/licenses/MIT</licenseUrl>
+		<projectUrl>https://github.com/sergeyt/SharpExpress</projectUrl>
+		<requireLicenseAcceptance>false</requireLicenseAcceptance>
+		<description>Simple HTTP server for .NET inspired by express.js</description>
+		<releaseNotes>Initial release.</releaseNotes>
+		<copyright>Copyright 2014</copyright>
+		<tags>web http routing server</tags>
+		<frameworkAssemblies>
+			<frameworkAssembly assemblyName="System.Xml"/>
+			<frameworkAssembly assemblyName="System.Xml.Linq"/>
+			<frameworkAssembly assemblyName="System.Web"/>
+			<frameworkAssembly assemblyName="System.Web.Abstractions"/>
+			<frameworkAssembly assemblyName="System.Web.Routing"/>
+		</frameworkAssemblies>
+	</metadata>
+	<files>
+		<file src="build/release/SharpExpress.dll" target="lib/net35-client"/>
+	</files>
+</package>
