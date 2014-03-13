@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Web.Routing;
@@ -13,12 +11,11 @@ namespace SharpExpress
 	public static class StaticMiddleware
 	{
 		/// <summary>
-		/// Serves specified directory
+		/// Serves specified directory.
 		/// </summary>
 		/// <param name="app">The application to extend.</param>
-		/// <param name="url"></param>
-		/// <param name="dir"></param>
-		/// <returns></returns>
+		/// <param name="url">The url prefix.</param>
+		/// <param name="dir">The directory to serve.</param>
 		public static ExpressApplication Static(this ExpressApplication app, string url, string dir)
 		{
 			if (!Directory.Exists(dir))
@@ -30,43 +27,28 @@ namespace SharpExpress
 
 			return app.Get(url, req =>
 			{
-				var path = ResolveFile(url, dir, req.HttpContext.Request.Path);
+				var relpath = req.ResolveRelativePath(url);
+				var path = Path.Combine(dir, relpath);
 				req.SendFile(path);
 			});
 		}
 
-		private static string ResolveFile(string url, string dir, string vpath)
+		internal static string ResolveRelativePath(this RequestContext req, string url)
 		{
-			// TODO fix path resolving
+			// TODO tests
+			var vpath = req.HttpContext.Request.Path;
 			var regex = new Regex(@"\{\*[^\}]+\}");
 			var m = regex.Match(url);
-			var relpath = vpath.Substring(m.Success ? m.Index : url.Length).TrimStart('/');
-			return Path.Combine(dir, relpath);
+			return vpath.Substring(m.Success ? m.Index : url.Length).TrimStart('/');
 		}
-
-		private static readonly Dictionary<string, string> MimeTypes
-			= new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
-			{
-				{".css", "text/css"},
-				{".html", "text/html"},
-				{".htm", "text/html"},
-				{".js", "text/javascript"},
-				{".json", "application/json"},
-				{".xml", "text/xml"}
-			};
 
 		public static void SendFile(this RequestContext req, string path)
 		{
-			var ext = Path.GetExtension(path);
-
-			string type;
-			if (!MimeTypes.TryGetValue(ext, out type))
-				throw new NotSupportedException("Unsupported file type");
+			req.ContentTypeByPath(path);
 
 			var res = req.HttpContext.Response;
 			res.StatusCode = (int)HttpStatusCode.OK;
-			res.ContentType = type;
-
+			
 			using (var fs = File.OpenRead(path))
 				fs.CopyTo(res.OutputStream);
 		}
