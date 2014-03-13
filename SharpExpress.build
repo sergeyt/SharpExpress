@@ -1,0 +1,113 @@
+<?xml version="1.0"?>
+<project xmlns="http://nant.sf.net" name="SharpExpress" default="default">
+
+	<property name="rootdir" value="${project::get-base-directory()}"/>
+	<property name="srcdir" value="${rootdir}/SharpExpress"/>
+	
+	<!-- input properties -->
+	<property name="buildroot" value="${rootdir}/build" unless="${property::exists('buildroot')}"/>
+	<property name="runtime" value="clr" unless="${property::exists('runtime')}"/>
+	<property name="debug" value="false" unless="${property::exists('debug')}"/>
+	<property name="config" value="release"/>
+	<property name="delaysign" value="false" unless="${property::exists('delaysign')}"/>
+	<property name="assembly" value="SharpExpress"/>
+	<property name="define" value=""/>
+
+	<if test="${debug}">
+		<property name="define" value="DEBUG"/>
+		<property name="config" value="debug"/>
+	</if>
+	
+	<property name="outdir" value="${buildroot}/${config}"/>
+
+	<property name="nant.settings.currentframework" value="net-3.5" />
+	<if test="${runtime == 'mono'}">
+		<property name="nant.settings.currentframework" value="mono-3.5" />
+	</if>
+
+	<target name="default">
+		<call target="nunit"/>
+		<call target="rebuild"/>
+		<call target="test"/>
+		<call target="release"/>
+		<call target="rebuild"/>
+		<call target="pack"/>
+	</target>
+
+	<target name="release">
+		<property name="config" value="release"/>
+		<property name="define" value=""/>
+		<property name="outdir" value="${buildroot}/${config}"/>
+	</target>
+
+	<target name="debug">
+		<property name="config" value="debug"/>
+		<property name="define" value="DEBUG"/>
+		<property name="debug" value="Full"/>
+		<property name="outdir" value="${buildroot}/${config}"/>
+	</target>
+	
+	<target name="nunit">
+		<property name="config" value="${config}-nunit"/>
+		<property name="define" value="${define};NUNIT"/>
+		<property name="outdir" value="${buildroot}/${config}"/>
+	</target>
+
+	<property name="nunit.framework.dll" value="${srcdir}/packages/NUnit.2.6.2/lib/nunit.framework.dll"/>
+	
+	<target name="build">
+		<csc target="library" output="${outdir}/${assembly}.dll"
+			 debug="${debug}" define="${define}"
+			 keyfile="${rootdir}/SharpExpress.snk">
+			<references>
+				<include name="System.dll"/>
+				<include name="System.Core.dll"/>
+				<include name="System.Xml.dll"/>
+				<include name="System.Xml.Linq.dll"/>
+				<include name="System.Web.dll"/>
+				<include name="System.Web.Abstractions.dll"/>
+				<include name="System.Web.Routing.dll"/>
+				<include name="${nunit.framework.dll}"/>
+			</references>
+			<sources basedir="${srcdir}">
+				<include name="**/*.cs"/>
+			</sources>
+		</csc>
+	</target>
+
+	<target name="clean">
+		<delete dir="${srcdir}\obj" failonerror="false"/>
+		<delete dir="${srcdir}\bin" failonerror="false"/>
+		<delete failonerror="false">
+			<fileset basedir="${outdir}">
+				<include name="${assembly}.*"/>
+			</fileset>
+		</delete>
+	</target>
+
+	<target name="rebuild" depends="clean, build"/>
+
+	<target name="test">
+		<nunit2>
+			<formatter type="Plain"/>
+			<formatter type="Xml" usefile="true" extension=".xml" outputdir="${outdir}"/>
+			<test>
+				<assemblies>
+					<include name="${outdir}/${assembly}.dll"/>
+			 	</assemblies>	
+			 	<references>
+			 		<include name="${nunit.framework.dll}"/>
+			 	</references>
+			</test>
+		</nunit2>
+	</target>
+
+	<target name="pack">
+		<exec program="nuget.exe" basedir=".nuget" workingdir="${rootdir}">
+			<arg value="pack"/>
+			<arg value="SharpExpress.nuspec"/>
+			<arg value='-OutputDirectory "${buildroot}/${config}"'/>
+		</exec>
+	</target>
+
+</project>
