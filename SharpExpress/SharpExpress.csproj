@@ -61,7 +61,7 @@
     <Compile Include="HttpResponseImpl.cs" />
     <Compile Include="HttpServer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="StaticMiddleware.cs" />
+    <Compile Include="StaticHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
