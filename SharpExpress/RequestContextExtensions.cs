@@ -8,6 +8,11 @@ namespace SharpExpress
 {
 	public static class RequestContextExtensions
 	{
+		public static object Param(this RequestContext req, string name)
+		{
+			return req.RouteData.Values[name];
+		}
+
 		public static void Text(this RequestContext req, string text)
 		{
 			Text(req, text, HttpStatusCode.OK);
