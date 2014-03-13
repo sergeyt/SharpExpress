@@ -8,7 +8,7 @@
 		<licenseUrl>http://opensource.org/licenses/MIT</licenseUrl>
 		<projectUrl>https://github.com/sergeyt/SharpExpress</projectUrl>
 		<requireLicenseAcceptance>false</requireLicenseAcceptance>
-		<description>Simple HTTP server for .NET inspired by express.js</description>
+		<description>Simple HTTP handler with ASP.NET MVC-like routing inspired by express.js</description>
 		<releaseNotes>Initial release.</releaseNotes>
 		<copyright>Copyright 2014</copyright>
 		<tags>web http routing server</tags>

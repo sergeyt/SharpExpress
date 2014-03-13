@@ -2,7 +2,7 @@
 
 # SharpExpress
 
-Simple HTTP routing for .NET inspired by [express.js](http://expressjs.com/)
+Simple HTTP handler with ASP.NET MVC-like routing inspired by [express.js](http://expressjs.com/)
 
 ## Features
 * Lightweight library - now ~40kb
