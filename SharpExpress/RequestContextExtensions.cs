@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Web.Routing;
 using System.Web.Script.Serialization;
@@ -70,6 +72,16 @@ namespace SharpExpress
 		public static void NotFound(this RequestContext req, string path)
 		{
 			Text(req, string.Format("Resource '{0}' not found!", path), HttpStatusCode.NotFound);
+		}
+
+		public static IDictionary<string, object> ParseJson(this RequestContext req)
+		{
+			using (var reader = new StreamReader(req.HttpContext.Request.InputStream))
+			{
+				var json = reader.ReadToEnd();
+				var serializer = new JavaScriptSerializer();
+				return (IDictionary<string, object>) serializer.DeserializeObject(json);
+			}
 		}
 	}
 }

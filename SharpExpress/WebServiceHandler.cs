@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Reflection;
+using System.Web.Routing;
 using System.Web.Services;
 
 namespace SharpExpress
 {
+	// TODO fast method invoke using LINQ expressions or DynamicMethod
+
 	/// <summary>
 	/// Middleware to host web services.
 	/// </summary>
@@ -15,6 +18,9 @@ namespace SharpExpress
 			if (urlPrefix == null) throw new ArgumentNullException("urlPrefix");
 
 			var type = typeof(T);
+			if (type.IsAbstract || type.IsInterface)
+				throw new InvalidOperationException("Need concrete type!");
+
 			var methods = type.GetMethods(BindingFlags.Instance | BindingFlags.Public);
 			var service = Activator.CreateInstance<T>();
 
@@ -39,19 +45,64 @@ namespace SharpExpress
 			{
 				app.Get(
 					Combine(urlPrefix, method.Name),
-					req => req.Json(method.Invoke(serviceInstance, new object[0]))
-					);
+					req =>
+					{
+						var result = method.Invoke(serviceInstance, new object[0]);
+						req.Json(result);
+					});
 			}
 			else
 			{
+				app.Get(
+					Combine(urlPrefix, method.Name),
+					req =>
+					{
+						var args = ParseQueryArgs(req, parameters);
+						var result = method.Invoke(serviceInstance, args);
+						req.Json(result);
+					});
+
 				app.Post(
 					Combine(urlPrefix, method.Name),
 					req =>
 					{
-						// parse json and invoke method
-						throw new NotImplementedException();
+						var args = ParseArgs(req, parameters);
+						var result = method.Invoke(serviceInstance, args);
+						req.Json(result);
 					});
 			}
+		}
+
+		private static object[] ParseQueryArgs(RequestContext req, ParameterInfo[] parameters)
+		{
+			var query = req.HttpContext.Request.QueryString;
+			var args = new object[parameters.Length];
+			for (int i = 0; i < args.Length; i++)
+			{
+				var param = parameters[i];
+				var val = query.Get(param.Name);
+				if (val != null)
+				{
+					args[i] = Convert.ChangeType(val, param.ParameterType);
+				}
+			}
+			return args;
+		}
+
+		private static object[] ParseArgs(RequestContext req, ParameterInfo[] parameters)
+		{
+			var dictionary = req.ParseJson();
+			var args = new object[parameters.Length];
+			for (int i = 0; i < args.Length; i++)
+			{
+				var param = parameters[i];
+				object val;
+				if (dictionary.TryGetValue(param.Name, out val))
+				{
+					args[i] = Convert.ChangeType(val, param.ParameterType);
+				}
+			}
+			return args;
 		}
 
 		private static string Combine(string urlPrefix, string suffix)

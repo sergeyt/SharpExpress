@@ -5,9 +5,15 @@ namespace ConsoleServer
 	internal class MathService
 	{
 		[WebMethod]
-		public object Square(double x)
+		public double Square(double x)
 		{
 			return x * x;
+		}
+
+		[WebMethod]
+		public double Add(double x, double y)
+		{
+			return x + y;
 		}
 	}
 }
