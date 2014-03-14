@@ -55,6 +55,7 @@
     <Compile Include="EmbeddedHandler.cs" />
     <Compile Include="ExpressApplication.Linq.cs" />
     <Compile Include="Extensions.cs" />
+    <Compile Include="HttpListenerWorkerRequest.cs" />
     <Compile Include="MimeType.cs" />
     <Compile Include="RequestContextExtensions.cs" />
     <Compile Include="ExpressApplication.cs" />

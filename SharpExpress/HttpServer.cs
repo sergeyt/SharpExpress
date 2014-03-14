@@ -2,13 +2,29 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Threading;
+using System.Web;
 
 namespace SharpExpress
 {
+	public sealed class HttpServerSettings
+	{
+		public HttpServerSettings()
+		{
+			WorkerCount = 4;
+			VirtualDir = "/";
+			PhisycalDir = Environment.CurrentDirectory;
+		}
+
+		public int Port { get; set; }
+		public int WorkerCount { get; set; }
+		public string VirtualDir { get; set; }
+		public string PhisycalDir { get; set; }
+	}
+
 	/// <summary>
 	/// Micro http server.
 	/// </summary>
-	public sealed class HttpServer : IDisposable
+	public sealed class HttpServer : MarshalByRefObject, IDisposable
 	{
 		private readonly HttpListener _listener = new HttpListener();
 		private readonly Thread _listenerThread;
@@ -16,23 +32,25 @@ namespace SharpExpress
 		private readonly ManualResetEvent _stop = new ManualResetEvent(false);
 		private readonly ManualResetEvent _ready = new ManualResetEvent(false);
 		private readonly Queue<HttpListenerContext> _queue = new Queue<HttpListenerContext>();
-		private readonly ExpressApplication _app;
+		private readonly IHttpHandler _app;
+		private readonly HttpServerSettings _settings;
 
 		// TODO more settings
-		public HttpServer(ExpressApplication app, int port, int workerCount)
+		public HttpServer(IHttpHandler app, HttpServerSettings settings)
 		{
 			if (app == null) throw new ArgumentNullException("app");
-			if (workerCount <= 0) throw new ArgumentOutOfRangeException("workerCount");
+			if (settings == null) throw new ArgumentNullException("settings");
 
 			_app = app;
+			_settings = settings;
 
-			_listener.Prefixes.Add(string.Format(@"http://+:{0}/", port));
+			_listener.Prefixes.Add(string.Format(@"http://+:{0}/", settings.Port));
 			_listenerThread = new Thread(Listen);
 			
 			_listener.Start();
 			_listenerThread.Start();
 
-			_workers = new Thread[workerCount];
+			_workers = new Thread[settings.WorkerCount];
 			for (int i = 0; i < _workers.Length; i++)
 			{
 				_workers[i] = new Thread(Worker);
@@ -109,6 +127,35 @@ namespace SharpExpress
 
 		private void ProcessRequest(HttpListenerContext context)
 		{
+			var app = _app as ExpressApplication;
+			if (app != null)
+			{
+				ProcessExpressRequest(context, app);
+				return;
+			}
+
+
+			var res = context.Response;
+			using (res.OutputStream)
+			{
+				try
+				{
+					var workerRequest = new HttpListenerWorkerRequest(context, _settings.VirtualDir, _settings.PhisycalDir);
+					_app.ProcessRequest(new HttpContext(workerRequest));
+					workerRequest.EndOfRequest();
+				}
+				catch (Exception e)
+				{
+					Console.Error.WriteLine(e);
+					res.StatusCode = (int)HttpStatusCode.InternalServerError;
+					res.ContentType = "text/plain";
+					res.OutputStream.Write(e.ToString());
+				}
+			}
+		}
+
+		private static void ProcessExpressRequest(HttpListenerContext context, ExpressApplication app)
+		{
 			var ctx = new HttpContextImpl(context.Request, context.Response);
 			var res = ctx.Response;
 
@@ -116,9 +163,9 @@ namespace SharpExpress
 			{
 				try
 				{
-					if (!_app.Process(ctx))
+					if (!app.Process(ctx))
 					{
-						res.StatusCode = (int)HttpStatusCode.NotFound;
+						res.StatusCode = (int) HttpStatusCode.NotFound;
 						res.StatusDescription = "Not found";
 						res.ContentType = "text/plain";
 						res.Write("Resource not found!");
@@ -128,7 +175,7 @@ namespace SharpExpress
 				{
 					Console.Error.WriteLine(e);
 
-					res.StatusCode = (int)HttpStatusCode.InternalServerError;
+					res.StatusCode = (int) HttpStatusCode.InternalServerError;
 					res.ContentType = "text/plain";
 					res.Write(e.ToString());
 				}

@@ -27,6 +27,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApp", "Samples\WebApp\We
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{31EF5799-33EB-4CB9-8E82-A86C25F4E7AD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspHost", "Samples\AspHost\AspHost.csproj", "{A21ABB2D-C935-41F5-ABCD-3C7607FB4A8B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +51,10 @@ Global
 		{039B351B-C790-44CD-A506-BF1CC1CA28A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{039B351B-C790-44CD-A506-BF1CC1CA28A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{039B351B-C790-44CD-A506-BF1CC1CA28A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A21ABB2D-C935-41F5-ABCD-3C7607FB4A8B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A21ABB2D-C935-41F5-ABCD-3C7607FB4A8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A21ABB2D-C935-41F5-ABCD-3C7607FB4A8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A21ABB2D-C935-41F5-ABCD-3C7607FB4A8B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -56,5 +62,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{039B351B-C790-44CD-A506-BF1CC1CA28A2} = {31EF5799-33EB-4CB9-8E82-A86C25F4E7AD}
 		{A473963A-A535-480E-B141-A63D991A3540} = {31EF5799-33EB-4CB9-8E82-A86C25F4E7AD}
+		{A21ABB2D-C935-41F5-ABCD-3C7607FB4A8B} = {31EF5799-33EB-4CB9-8E82-A86C25F4E7AD}
 	EndGlobalSection
 EndGlobal

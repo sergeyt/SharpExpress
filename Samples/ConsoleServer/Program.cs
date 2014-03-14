@@ -8,7 +8,7 @@ namespace ConsoleServer
 {
 	internal static class Program
 	{
-		static void Main(string[] args)
+		private static void Main(string[] args)
 		{
 			var options = (from arg in args
 				where arg.StartsWith("--")
@@ -19,10 +19,9 @@ namespace ConsoleServer
 				select new KeyValuePair<string, string>(key, val))
 				.ToDictionary(x => x.Key, x => x.Value, StringComparer.InvariantCultureIgnoreCase);
 
-			
 			var app = new ExpressApplication();
 
-			Func<double, double> square = x => x * x;
+			Func<double, double> square = x => x*x;
 
 			app.Get("", req => req.Text("Hi!"))
 				.Get(
@@ -46,19 +45,19 @@ namespace ConsoleServer
 				.WebService<MathService>("math.svc");
 
 			var port = options.Get("port", 1111);
-			using (new HttpServer(app, port, 4))
+			using (new HttpServer(app, new HttpServerSettings {Port = port}))
 			{
 				Console.WriteLine("Listening port {0}. Press enter to stop the server.", port);
 				Console.ReadLine();
 			}
 		}
 
-		static T Get<T>(this IDictionary<string, string> options, string name, T defaultValue)
+		private static T Get<T>(this IDictionary<string, string> options, string name, T defaultValue)
 		{
 			string val;
 			if (!options.TryGetValue(name, out val))
 				return defaultValue;
-			return (T)Convert.ChangeType(val, typeof(T), CultureInfo.InvariantCulture);
+			return (T) Convert.ChangeType(val, typeof(T), CultureInfo.InvariantCulture);
 		}
 	}
 }
