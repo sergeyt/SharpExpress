@@ -57,6 +57,7 @@
     <Compile Include="Extensions.cs" />
     <Compile Include="HttpListenerWorkerRequest.cs" />
     <Compile Include="MimeType.cs" />
+    <Compile Include="MultiHttpHandler.cs" />
     <Compile Include="RequestContextExtensions.cs" />
     <Compile Include="ExpressApplication.cs" />
     <Compile Include="HttpContextImpl.cs" />
