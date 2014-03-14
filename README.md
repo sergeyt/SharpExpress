@@ -6,7 +6,7 @@
 Simple HTTP handler with ASP.NET MVC-like routing inspired by [express.js](http://expressjs.com/)
 
 ## Features
-* Lightweight library - now ~40kb
+* Lightweight library - now ~164kb
 * Built-in light http server
 * Based on .NET BCL only without external dependencies
 * Using System.Web.Routing for url routing
