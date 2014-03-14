@@ -15,6 +15,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 		SharpExpress.build = SharpExpress.build
 		SharpExpress.nuspec = SharpExpress.nuspec
+		SharpExpress.rsp = SharpExpress.rsp
+		SharpExpress.test.rsp = SharpExpress.test.rsp
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "http-server", "http-server\http-server.csproj", "{56726D02-2114-445D-A393-98DF978595B4}"
@@ -52,7 +54,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{A473963A-A535-480E-B141-A63D991A3540} = {31EF5799-33EB-4CB9-8E82-A86C25F4E7AD}
 		{039B351B-C790-44CD-A506-BF1CC1CA28A2} = {31EF5799-33EB-4CB9-8E82-A86C25F4E7AD}
+		{A473963A-A535-480E-B141-A63D991A3540} = {31EF5799-33EB-4CB9-8E82-A86C25F4E7AD}
 	EndGlobalSection
 EndGlobal

@@ -67,6 +67,7 @@
 				<include name="System.Web.dll"/>
 				<include name="System.Web.Abstractions.dll"/>
 				<include name="System.Web.Routing.dll"/>
+				<include name="System.Web.Services.dll"/>
 				<include name="${nunit.framework.dll}"/>
 			</references>
 			<sources basedir="${srcdir}">

@@ -42,7 +42,8 @@ namespace ConsoleServer
 						})
 				)
 				.Json("math/json/square/{x}", square)
-				.Xml("math/xml/square/{x}", square);
+				.Xml("math/xml/square/{x}", square)
+				.WebService<MathService>("math.svc");
 
 			var port = options.Get("port", 1111);
 			using (new HttpServer(app, port, 4))

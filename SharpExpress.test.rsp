@@ -5,8 +5,8 @@
 /r:System.Web.dll
 /r:System.Web.Extensions.dll
 /r:System.Web.Routing.dll
+/r:System.Web.Services.dll
 /o+
 /define:NUNIT
 /recurse:SharpExpress/*.cs
 /out:SharpExpress.test.dll
-
