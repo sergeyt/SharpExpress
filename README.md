@@ -63,7 +63,7 @@ using (var server = new HttpServer(app, port, workerCount))
 }
 ```
 
-### LINQ API
+### Functional API
 
 ```c#
 Func<double, double> square = x => x * x;
@@ -74,6 +74,35 @@ app.Json("math/json/square/{x}", square)
 
 var port = 81;
 using (new HttpServer(app, port, 4))
+{
+	Console.WriteLine("Listening port {0}. Press enter to stop the server.", port);
+	Console.ReadLine();
+}
+```
+
+### WebService Extension
+
+```c#
+internal class MathService
+{
+	[WebMethod]
+	public double Square(double x)
+	{
+		return x * x;
+	}
+
+	[WebMethod]
+	public double Add(double x, double y)
+	{
+		return x + y;
+	}
+}
+
+var app = new ExpressApplication();
+app.WebService<MathService>("math.svc");
+
+var port = 1111;
+using (new HttpServer(app, new HttpServerSettings {Port = port}))
 {
 	Console.WriteLine("Listening port {0}. Press enter to stop the server.", port);
 	Console.ReadLine();
