@@ -22,21 +22,23 @@ namespace SharpExpress
 				throw new InvalidOperationException("Need concrete type!");
 
 			var methods = type.GetMethods(BindingFlags.Instance | BindingFlags.Public);
-			var service = Activator.CreateInstance<T>();
 
+			object service = null;
+			Func<object> serviceInstance = () => service ?? (service = Activator.CreateInstance<T>());
+			
 			foreach (var method in methods)
 			{
 				var meta = method.GetAttribute<WebMethodAttribute>(true);
 				if (meta == null) continue;
 
-				RegisterMethod(app, urlPrefix, service, method, meta);
+				RegisterMethod(app, urlPrefix, serviceInstance, method, meta);
 			}
 
 			return app;
 		}
 
-		private static void RegisterMethod(this ExpressApplication app, string urlPrefix, object serviceInstance,
-			MethodBase method, WebMethodAttribute meta)
+		private static void RegisterMethod(this ExpressApplication app, string urlPrefix,
+			Func<object> serviceInstance, MethodBase method, WebMethodAttribute meta)
 		{
 			// TODO support WebMethodAttribute options (caching, etc)
 
@@ -48,7 +50,7 @@ namespace SharpExpress
 					req =>
 					{
 						req.SetContext();
-						var result = method.Invoke(serviceInstance, new object[0]);
+						var result = method.Invoke(serviceInstance(), new object[0]);
 						req.Json(result);
 					});
 			}
@@ -60,7 +62,7 @@ namespace SharpExpress
 					{
 						req.SetContext();
 						var args = ParseQueryArgs(req, parameters);
-						var result = method.Invoke(serviceInstance, args);
+						var result = method.Invoke(serviceInstance(), args);
 						req.Json(result);
 					});
 
@@ -70,7 +72,7 @@ namespace SharpExpress
 					{
 						req.SetContext();
 						var args = ParseArgs(req, parameters);
-						var result = method.Invoke(serviceInstance, args);
+						var result = method.Invoke(serviceInstance(), args);
 						req.Json(result);
 					});
 			}

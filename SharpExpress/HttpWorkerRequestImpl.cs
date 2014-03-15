@@ -21,8 +21,6 @@ namespace SharpExpress
 
 		public HttpWorkerRequestImpl(HttpListenerContext context, HttpServerSettings settings)
 			: base(
-				settings.VirtualDir,
-				settings.PhisycalDir,
 				context.Request.Url.LocalPath,
 				TrimQuery(context.Request.Url.Query),
 				null)
@@ -33,8 +31,6 @@ namespace SharpExpress
 
 		public HttpWorkerRequestImpl(HttpContextBase context, HttpServerSettings settings)
 			: base(
-				settings.VirtualDir,
-				settings.PhisycalDir,
 				context.Request.Url.LocalPath,
 				TrimQuery(context.Request.Url.Query),
 				null)

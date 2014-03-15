@@ -13,9 +13,8 @@ namespace SharpExpress
 	{
 		internal static void SetContext(this RequestContext req)
 		{
-			// TODO restore
-//			var context = req.HttpContext.Unwrap();
-//			HttpContext.Current = context;
+			var context = req.HttpContext.Unwrap();
+			HttpContext.Current = context;
 		}
 
 		public static T Param<T>(this RequestContext req, string name)

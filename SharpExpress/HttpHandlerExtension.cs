@@ -9,7 +9,7 @@ namespace SharpExpress
 	/// </summary>
 	public static class HttpHandlerExtension
 	{
-		public static ExpressApplication HttpHandler(this ExpressApplication app, string url, string verb, IHttpHandler handler)
+		public static ExpressApplication HttpHandler<T>(this ExpressApplication app, string url, string verb)
 		{
 			if (string.IsNullOrEmpty(verb))
 				verb = "*";
@@ -20,8 +20,15 @@ namespace SharpExpress
 				return verb.IndexOf(v, StringComparison.OrdinalIgnoreCase) >= 0;
 			};
 
+			IHttpHandler handler = null;
+
 			Action<RequestContext> action = req =>
 			{
+				if (handler == null)
+				{
+					handler = (IHttpHandler) Activator.CreateInstance<T>();
+				}
+
 				var context = req.HttpContext.Unwrap();
 				handler.ProcessRequest(context);
 			};

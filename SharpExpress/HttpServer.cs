@@ -56,8 +56,10 @@ namespace SharpExpress
 				_workers[i] = new Thread(Worker);
 				_workers[i].Start();
 			}
+
+			var appHost = new AppHost(settings);
 		}
-		
+
 		public void Dispose()
 		{
 			Stop();
