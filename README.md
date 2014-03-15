@@ -3,15 +3,20 @@
 
 # SharpExpress
 
-Simple HTTP handler with ASP.NET MVC-like routing inspired by [express.js](http://expressjs.com/)
+Simple API to handle HTTP requests with ASP.NET MVC-like routing inspired by [express.js](http://expressjs.com/)
 
 ## Features
 * Lightweight library - now ~164kb
+* Extensible
 * Built-in light http server
 * Based on .NET BCL only without external dependencies
 * Using System.Web.Routing for url routing
 * Compilable and runnable on Mono
-* Web service handlers to handle requests using existing web service class
+* Runnable in ASP.NET applications since ExpressApplication implements IHttpHandler
+* Use WebService extension to handle requests using existing web service class
+* Use HttpHandler extension to handle requests using existing IHttpHandler implementations
+* Use Static extension to serve static files
+* Use Embedded extension to serve emmbedded resources of application assemblies
 
 ## Examples
 
