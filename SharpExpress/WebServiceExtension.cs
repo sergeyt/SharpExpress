@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Globalization;
 using System.Reflection;
 using System.Web.Routing;
 using System.Web.Services;
@@ -48,6 +47,7 @@ namespace SharpExpress
 					Combine(urlPrefix, method.Name),
 					req =>
 					{
+						req.SetContext();
 						var result = method.Invoke(serviceInstance, new object[0]);
 						req.Json(result);
 					});
@@ -58,6 +58,7 @@ namespace SharpExpress
 					Combine(urlPrefix, method.Name),
 					req =>
 					{
+						req.SetContext();
 						var args = ParseQueryArgs(req, parameters);
 						var result = method.Invoke(serviceInstance, args);
 						req.Json(result);
@@ -67,6 +68,7 @@ namespace SharpExpress
 					Combine(urlPrefix, method.Name),
 					req =>
 					{
+						req.SetContext();
 						var args = ParseArgs(req, parameters);
 						var result = method.Invoke(serviceInstance, args);
 						req.Json(result);
@@ -84,7 +86,7 @@ namespace SharpExpress
 				var val = query.Get(param.Name);
 				if (val != null)
 				{
-					args[i] = Convert(val, param.ParameterType);
+					args[i] = val.ConvertTo(param.ParameterType);
 				}
 			}
 			return args;
@@ -100,32 +102,17 @@ namespace SharpExpress
 				object val;
 				if (dictionary.TryGetValue(param.Name, out val))
 				{
-					args[i] = Convert(val, param.ParameterType);
+					args[i] = val.ConvertTo(param.ParameterType);
 				}
 			}
 			return args;
 		}
 
-		private static object Convert(object val, Type type)
+		private static string Combine(string prefix, string suffix)
 		{
-			switch (Type.GetTypeCode(type))
-			{
-				case TypeCode.Empty:
-					return null;
-				case TypeCode.Object:
-					return val;
-				case TypeCode.DBNull:
-					return DBNull.Value;
-				default:
-					return System.Convert.ChangeType(val, type, CultureInfo.InvariantCulture);
-			}
-		}
-
-		private static string Combine(string urlPrefix, string suffix)
-		{
-			return urlPrefix.EndsWith("/")
-				? urlPrefix + suffix
-				: urlPrefix + "/" + suffix;
+			return prefix.EndsWith("/")
+				? prefix + suffix
+				: prefix + "/" + suffix;
 		}
 	}
 }

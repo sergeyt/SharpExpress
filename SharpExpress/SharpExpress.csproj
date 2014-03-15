@@ -52,6 +52,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConvertExtension.cs" />
     <Compile Include="EmbeddedExtension.cs" />
     <Compile Include="ExpressFunctionalExtensions.cs" />
     <Compile Include="Extensions.cs" />

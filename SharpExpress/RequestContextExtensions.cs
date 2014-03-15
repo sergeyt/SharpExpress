@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Net;
+using System.Web;
 using System.Web.Routing;
 using System.Web.Script.Serialization;
 using System.Xml.Serialization;
@@ -11,10 +11,17 @@ namespace SharpExpress
 {
 	public static class RequestContextExtensions
 	{
+		internal static void SetContext(this RequestContext req)
+		{
+			// TODO restore
+//			var context = req.HttpContext.Unwrap();
+//			HttpContext.Current = context;
+		}
+
 		public static T Param<T>(this RequestContext req, string name)
 		{
 			var val = req.RouteData.Values[name];
-			return (T) Convert.ChangeType(val, typeof(T), CultureInfo.InvariantCulture);
+			return (T) val.ConvertTo(typeof(T));
 		}
 
 		public static void Text(this RequestContext req, string text)

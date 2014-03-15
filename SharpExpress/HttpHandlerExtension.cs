@@ -22,22 +22,7 @@ namespace SharpExpress
 
 			Action<RequestContext> action = req =>
 			{
-				var impl = req.HttpContext as HttpContextImpl;
-				if (impl != null)
-				{
-					handler.ProcessRequest(impl.HttpContext);
-					return;
-				}
-
-				var context = new HttpContext(new HttpWorkerRequestImpl(
-					req.HttpContext,
-					// TODO fix
-					new HttpServerSettings
-					{
-						VirtualDir = "/",
-						PhisycalDir = Environment.CurrentDirectory
-					}));
-
+				var context = req.HttpContext.Unwrap();
 				handler.ProcessRequest(context);
 			};
 
@@ -52,6 +37,24 @@ namespace SharpExpress
 			}
 
 			return app;
+		}
+
+		internal static HttpContext Unwrap(this HttpContextBase context)
+		{
+			var impl = context as HttpContextImpl;
+			if (impl != null)
+			{
+				return impl.HttpContext;
+			}
+
+			return new HttpContext(new HttpWorkerRequestImpl(
+				context,
+				// TODO fix
+				new HttpServerSettings
+				{
+					VirtualDir = "/",
+					PhisycalDir = Environment.CurrentDirectory
+				}));
 		}
 	}
 }

@@ -233,7 +233,7 @@ namespace SharpExpress
 
 		public override NameValueCollection Headers
 		{
-			get { return base.Headers; }
+			get { return _response.Headers; }
 		}
 
 		public override Encoding HeaderEncoding { get; set; }

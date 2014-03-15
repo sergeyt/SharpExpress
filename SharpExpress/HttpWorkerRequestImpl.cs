@@ -1,53 +1,45 @@
 ﻿using System;
 using System.Net;
 using System.Web;
+using System.Web.Hosting;
 
 namespace SharpExpress
 {
 	/// <summary>
 	/// Implements <see cref="HttpWorkerRequest"/> using <see cref="HttpListenerContext"/>.
 	/// </summary>
-	internal sealed class HttpWorkerRequestImpl : HttpWorkerRequest
+	internal sealed class HttpWorkerRequestImpl : SimpleWorkerRequest
 	{
 		private readonly HttpListenerContext _listenerContext;
 		private readonly HttpContextBase _context;
-		private readonly string _virtualDir;
-		private readonly string _physicalDir;
+
+		private static string TrimQuery(string s)
+		{
+			if (string.IsNullOrEmpty(s)) return s;
+			return s.StartsWith("?") ? s.Substring(1) : s;
+		}
 
 		public HttpWorkerRequestImpl(HttpListenerContext context, HttpServerSettings settings)
+			: base(
+				settings.VirtualDir,
+				settings.PhisycalDir,
+				context.Request.Url.LocalPath,
+				TrimQuery(context.Request.Url.Query),
+				null)
 		{
-			if (context == null) throw new ArgumentNullException("context");
-			if (settings == null) throw new ArgumentNullException("settings");
-
 			_listenerContext = context;
 			_context = new HttpContextImpl(context, settings);
-			_virtualDir = settings.VirtualDir;
-			_physicalDir = settings.PhisycalDir;
 		}
 
 		public HttpWorkerRequestImpl(HttpContextBase context, HttpServerSettings settings)
+			: base(
+				settings.VirtualDir,
+				settings.PhisycalDir,
+				context.Request.Url.LocalPath,
+				TrimQuery(context.Request.Url.Query),
+				null)
 		{
-			if (context == null) throw new ArgumentNullException("context");
-			if (settings == null) throw new ArgumentNullException("settings");
-
 			_context = context;
-			_virtualDir = settings.VirtualDir;
-			_physicalDir = settings.PhisycalDir;
-		}
-
-		public override string GetUriPath()
-		{
-			return _context.Request.Url.LocalPath;
-		}
-
-		public override string GetQueryString()
-		{
-			return _context.Request.Url.Query;
-		}
-
-		public override string GetRawUrl()
-		{
-			return _context.Request.RawUrl;
 		}
 
 		public override string GetHttpVerbName()
@@ -63,40 +55,53 @@ namespace SharpExpress
 					_listenerContext.Request.ProtocolVersion.Major,
 					_listenerContext.Request.ProtocolVersion.Minor);
 			}
-			return string.Format("HTTP/{0}.{1}", 1, 1);
+			return base.GetHttpVersion();
+		}
+
+		private IPEndPoint RemoteEndPoint
+		{
+			get { return _listenerContext.IfNotNull(x => x.Request.RemoteEndPoint); }
+		}
+
+		private IPEndPoint LocalEndPoint
+		{
+			get { return _listenerContext.IfNotNull(x => x.Request.LocalEndPoint); }
 		}
 
 		public override string GetRemoteAddress()
 		{
-			return _context.Request.UserHostAddress;
+			if (RemoteEndPoint != null)
+			{
+				return RemoteEndPoint.Address.ToString();
+			}
+			return base.GetRemoteAddress();
 		}
 
 		public override int GetRemotePort()
 		{
-			if (_listenerContext != null)
+			if (RemoteEndPoint != null)
 			{
-				return _listenerContext.Request.RemoteEndPoint.Port;
+				return RemoteEndPoint.Port;
 			}
-			return _context.Request.Url.Port;
+			return base.GetRemotePort();
 		}
 
 		public override string GetLocalAddress()
 		{
-			if (_listenerContext != null)
+			if (LocalEndPoint != null)
 			{
-				return _listenerContext.Request.LocalEndPoint.Address.ToString();
+				return LocalEndPoint.Address.ToString();
 			}
-			// TODO fix
-			return "";
+			return base.GetLocalAddress();
 		}
 
 		public override int GetLocalPort()
 		{
-			if (_listenerContext != null)
+			if (LocalEndPoint != null)
 			{
-				return _listenerContext.Request.LocalEndPoint.Port;
+				return LocalEndPoint.Port;
 			}
-			return _context.Request.Url.Port;
+			return base.GetLocalPort();
 		}
 
 		public override void SendStatus(int statusCode, string statusDescription)
@@ -147,16 +152,6 @@ namespace SharpExpress
 		public override int ReadEntityBody(byte[] buffer, int size)
 		{
 			return _context.Request.InputStream.Read(buffer, 0, size);
-		}
-
-		public override string GetAppPath()
-		{
-			return _virtualDir;
-		}
-
-		public override string GetAppPathTranslated()
-		{
-			return _physicalDir;
 		}
 	}
 }

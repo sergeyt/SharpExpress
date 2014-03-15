@@ -8,6 +8,11 @@ namespace SharpExpress
 {
 	internal static class Extensions
 	{
+		public static TR IfNotNull<T, TR>(this T obj, Func<T, TR> func) where T : class
+		{
+			return obj != null ? func(obj) : default (TR);
+		}
+
 		public static T GetAttribute<T>(this ICustomAttributeProvider provider, bool inherit) where T : Attribute
 		{
 			var attrs = (T[]) provider.GetCustomAttributes(typeof(T), inherit);
