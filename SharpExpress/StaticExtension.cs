@@ -8,7 +8,7 @@ namespace SharpExpress
 	/// <summary>
 	/// Static middleware to serve static files.
 	/// </summary>
-	public static class StaticHandler
+	public static class StaticExtension
 	{
 		/// <summary>
 		/// Serves specified directory.

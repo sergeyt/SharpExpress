@@ -10,7 +10,7 @@ namespace SharpExpress
 	/// <summary>
 	/// Reusable handler for embedded resources.
 	/// </summary>
-	public static class EmbeddedHandler
+	public static class EmbeddedExtension
 	{
 		/// <summary>
 		/// Serves embedded resources of specified assembly.
