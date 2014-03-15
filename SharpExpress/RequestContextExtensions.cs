@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Web.Routing;
@@ -10,9 +11,16 @@ namespace SharpExpress
 {
 	public static class RequestContextExtensions
 	{
-		public static object Param(this RequestContext req, string name)
+		public static T Get<T>(this RouteData data, string name)
 		{
-			return req.RouteData.Values[name];
+			var val = data.Values[name];
+			return (T)Convert.ChangeType(val, typeof(T), CultureInfo.InvariantCulture);
+		}
+
+		public static T Param<T>(this RequestContext req, string name)
+		{
+			var val = req.RouteData.Values[name];
+			return (T) Convert.ChangeType(val, typeof(T), CultureInfo.InvariantCulture);
 		}
 
 		public static void Text(this RequestContext req, string text)

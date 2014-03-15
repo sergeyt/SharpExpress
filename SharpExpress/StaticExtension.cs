@@ -37,7 +37,7 @@ namespace SharpExpress
 		{
 			// TODO tests
 			var vpath = req.HttpContext.Request.Path;
-			var regex = new Regex(@"\{\*[^\}]+\}");
+			var regex = new Regex(@"\{[^\}]*\*[^\}]*\}");
 			var m = regex.Match(url);
 			return vpath.Substring(m.Success ? m.Index : url.Length).TrimStart('/');
 		}
