@@ -6,5 +6,5 @@ using System.Reflection;
 
 internal static class VersionInfo
 {
-	public const string Version = "0.3.0.0";
+	public const string Version = "0.4.0.0";
 }
