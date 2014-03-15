@@ -11,12 +11,6 @@ namespace SharpExpress
 {
 	public static class RequestContextExtensions
 	{
-		public static T Get<T>(this RouteData data, string name)
-		{
-			var val = data.Values[name];
-			return (T)Convert.ChangeType(val, typeof(T), CultureInfo.InvariantCulture);
-		}
-
 		public static T Param<T>(this RequestContext req, string name)
 		{
 			var val = req.RouteData.Values[name];
