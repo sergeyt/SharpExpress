@@ -5,13 +5,23 @@ namespace SharpExpress
 {
 	internal sealed class HttpContextImpl : HttpContextBase
 	{
+		private readonly HttpListenerContext _context;
+		private readonly HttpServerSettings _settings;
 		private readonly HttpRequestBase _request;
 		private readonly HttpResponseBase _response;
+		private HttpContext _httpContext;
 
-		public HttpContextImpl(HttpListenerRequest request, HttpListenerResponse response)
+		public HttpContextImpl(HttpListenerContext context, HttpServerSettings settings)
 		{
-			_request = new HttpRequestImpl(request);
-			_response = new HttpResponseImpl(response);
+			_context = context;
+			_settings = settings;
+			_request = new HttpRequestImpl(context.Request);
+			_response = new HttpResponseImpl(context.Response);
+		}
+
+		public HttpContext HttpContext
+		{
+			get { return _httpContext ?? (_httpContext = new HttpContext(new HttpWorkerRequestImpl(_context, _settings))); }
 		}
 
 		public override HttpRequestBase Request

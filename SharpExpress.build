@@ -36,7 +36,7 @@
 
 	<target name="release">
 		<property name="config" value="release"/>
-		<property name="define" value=""/>
+		<property name="define" value="RELEASE"/>
 		<property name="outdir" value="${buildroot}/${config}"/>
 	</target>
 
@@ -68,6 +68,7 @@
 				<include name="System.Web.Abstractions.dll"/>
 				<include name="System.Web.Routing.dll"/>
 				<include name="System.Web.Services.dll"/>
+				<include name="Microsoft.VisualBasic.dll"/>
 				<include name="${nunit.framework.dll}"/>
 			</references>
 			<sources basedir="${srcdir}">

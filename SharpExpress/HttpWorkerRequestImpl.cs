@@ -7,19 +7,32 @@ namespace SharpExpress
 	/// <summary>
 	/// Implements <see cref="HttpWorkerRequest"/> using <see cref="HttpListenerContext"/>.
 	/// </summary>
-	internal sealed class HttpListenerWorkerRequest : HttpWorkerRequest
+	internal sealed class HttpWorkerRequestImpl : HttpWorkerRequest
 	{
-		private readonly HttpListenerContext _context;
+		private readonly HttpListenerContext _listenerContext;
+		private readonly HttpContextBase _context;
 		private readonly string _virtualDir;
 		private readonly string _physicalDir;
 
-		public HttpListenerWorkerRequest(HttpListenerContext context, string vdir, string pdir)
+		public HttpWorkerRequestImpl(HttpListenerContext context, HttpServerSettings settings)
 		{
 			if (context == null) throw new ArgumentNullException("context");
+			if (settings == null) throw new ArgumentNullException("settings");
+
+			_listenerContext = context;
+			_context = new HttpContextImpl(context, settings);
+			_virtualDir = settings.VirtualDir;
+			_physicalDir = settings.PhisycalDir;
+		}
+
+		public HttpWorkerRequestImpl(HttpContextBase context, HttpServerSettings settings)
+		{
+			if (context == null) throw new ArgumentNullException("context");
+			if (settings == null) throw new ArgumentNullException("settings");
 
 			_context = context;
-			_virtualDir = vdir;
-			_physicalDir = pdir;
+			_virtualDir = settings.VirtualDir;
+			_physicalDir = settings.PhisycalDir;
 		}
 
 		public override string GetUriPath()
@@ -44,29 +57,46 @@ namespace SharpExpress
 
 		public override string GetHttpVersion()
 		{
-			return string.Format("HTTP/{0}.{1}",
-				_context.Request.ProtocolVersion.Major,
-				_context.Request.ProtocolVersion.Minor);
+			if (_listenerContext != null)
+			{
+				return string.Format("HTTP/{0}.{1}",
+					_listenerContext.Request.ProtocolVersion.Major,
+					_listenerContext.Request.ProtocolVersion.Minor);
+			}
+			return string.Format("HTTP/{0}.{1}", 1, 1);
 		}
 
 		public override string GetRemoteAddress()
 		{
-			return _context.Request.RemoteEndPoint.Address.ToString();
+			return _context.Request.UserHostAddress;
 		}
 
 		public override int GetRemotePort()
 		{
-			return _context.Request.RemoteEndPoint.Port;
+			if (_listenerContext != null)
+			{
+				return _listenerContext.Request.RemoteEndPoint.Port;
+			}
+			return _context.Request.Url.Port;
 		}
 
 		public override string GetLocalAddress()
 		{
-			return _context.Request.LocalEndPoint.Address.ToString();
+			if (_listenerContext != null)
+			{
+				return _listenerContext.Request.LocalEndPoint.Address.ToString();
+			}
+			// TODO fix
+			return "";
 		}
 
 		public override int GetLocalPort()
 		{
-			return _context.Request.LocalEndPoint.Port;
+			if (_listenerContext != null)
+			{
+				return _listenerContext.Request.LocalEndPoint.Port;
+			}
+			return _context.Request.Url.Port;
 		}
 
 		public override void SendStatus(int statusCode, string statusDescription)

@@ -140,7 +140,7 @@ namespace SharpExpress
 			{
 				try
 				{
-					var workerRequest = new HttpListenerWorkerRequest(context, _settings.VirtualDir, _settings.PhisycalDir);
+					var workerRequest = new HttpWorkerRequestImpl(context, _settings);
 					_app.ProcessRequest(new HttpContext(workerRequest));
 					workerRequest.EndOfRequest();
 				}
@@ -154,16 +154,16 @@ namespace SharpExpress
 			}
 		}
 
-		private static void ProcessExpressRequest(HttpListenerContext context, ExpressApplication app)
+		private void ProcessExpressRequest(HttpListenerContext context, ExpressApplication app)
 		{
-			var ctx = new HttpContextImpl(context.Request, context.Response);
-			var res = ctx.Response;
+			var wrapper = new HttpContextImpl(context, _settings);
+			var res = wrapper.Response;
 
 			using (res.OutputStream)
 			{
 				try
 				{
-					if (!app.Process(ctx))
+					if (!app.Process(wrapper))
 					{
 						res.StatusCode = (int) HttpStatusCode.NotFound;
 						res.StatusDescription = "Not found";

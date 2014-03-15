@@ -38,6 +38,7 @@
     <AssemblyOriginatorKeyFile>..\SharpExpress.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="nunit.framework">
       <HintPath>packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
     </Reference>
@@ -55,7 +56,8 @@
     <Compile Include="EmbeddedExtension.cs" />
     <Compile Include="ExpressApplication.Linq.cs" />
     <Compile Include="Extensions.cs" />
-    <Compile Include="HttpListenerWorkerRequest.cs" />
+    <Compile Include="HttpHandlerExtension.cs" />
+    <Compile Include="HttpWorkerRequestImpl.cs" />
     <Compile Include="MimeType.cs" />
     <Compile Include="MultiHttpHandler.cs" />
     <Compile Include="Properties\CommonAssemblyInfo.cs" />

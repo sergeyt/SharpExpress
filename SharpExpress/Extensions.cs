@@ -2,6 +2,9 @@
 using System.IO;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
+using Microsoft.VisualBasic;
+using Microsoft.VisualBasic.CompilerServices;
 
 namespace SharpExpress
 {
@@ -17,6 +20,19 @@ namespace SharpExpress
 		{
 			var bytes = Encoding.UTF8.GetBytes(s);
 			stream.Write(bytes, 0, bytes.Length);
+		}
+
+		public static bool Like(this string s, string wildcard)
+		{
+			return Operators.LikeString(s, wildcard, CompareMethod.Text);
+		}
+
+		public static Regex WildcardRegex(this string wildcard)
+		{
+			return new Regex(
+				"^" + Regex.Escape(wildcard).Replace(@"\*", ".*").Replace(@"\?", ".") + "$"
+				, RegexOptions.Compiled | RegexOptions.IgnoreCase
+				);
 		}
 	}
 }
