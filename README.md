@@ -11,6 +11,7 @@ Simple HTTP handler with ASP.NET MVC-like routing inspired by [express.js](http:
 * Based on .NET BCL only without external dependencies
 * Using System.Web.Routing for url routing
 * Compilable and runnable on Mono
+* Web service handlers to handle requests using existing web service class
 
 ## Examples
 
