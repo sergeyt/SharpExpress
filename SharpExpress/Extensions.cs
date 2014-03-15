@@ -3,8 +3,6 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-using Microsoft.VisualBasic;
-using Microsoft.VisualBasic.CompilerServices;
 
 namespace SharpExpress
 {
@@ -24,7 +22,7 @@ namespace SharpExpress
 
 		public static bool Like(this string s, string wildcard)
 		{
-			return Operators.LikeString(s, wildcard, CompareMethod.Text);
+			return WildcardRegex(wildcard).IsMatch(s);
 		}
 
 		public static Regex WildcardRegex(this string wildcard)

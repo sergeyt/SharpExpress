@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Web;
 
 namespace SharpExpress
@@ -15,16 +16,18 @@ namespace SharpExpress
 		{
 			public readonly string Path;
 			public readonly IHttpHandler Handler;
+			private readonly Regex _regex;
 
 			public Entry(string path, IHttpHandler handler)
 			{
 				Path = path;
 				Handler = handler;
+				_regex = path.WildcardRegex();
 			}
 
 			public IHttpHandler Match(HttpContext context)
 			{
-				return context.Request.Path.Like(Path) ? Handler : null;
+				return _regex.IsMatch(context.Request.Path) ? Handler : null;
 			}
 		}
 
