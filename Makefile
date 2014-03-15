@@ -1,11 +1,8 @@
-all: compile compile-test test
+all: compile test
 
 compile:
 	gmcs @SharpExpress.rsp
 
-compile-test:
-	gmcs @SharpExpress.test.rsp
-
 test:
-	nunit-console SharpExpress.test.dll 
-
+	gmcs -pkg:nunit /out:SharpExpress.test.dll /define:NUNIT @SharpExpress.rsp
+	nunit-console SharpExpress.test.dll
