@@ -31,13 +31,13 @@ namespace SharpExpress
 				var meta = method.GetAttribute<WebMethodAttribute>(true);
 				if (meta == null) continue;
 
-				RegisterMethod(app, urlPrefix, serviceInstance, method, meta);
+				MethodHandler(app, urlPrefix, serviceInstance, method, meta);
 			}
 
 			return app;
 		}
 
-		private static void RegisterMethod(this ExpressApplication app, string urlPrefix,
+		private static void MethodHandler(this ExpressApplication app, string urlPrefix,
 			Func<object> serviceInstance, MethodBase method, WebMethodAttribute meta)
 		{
 			// TODO support WebMethodAttribute options (caching, etc)
