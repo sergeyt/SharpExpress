@@ -43,17 +43,6 @@ namespace SharpExpress
 			return _context.Request.HttpMethod;
 		}
 
-		public override string GetHttpVersion()
-		{
-			if (_listenerContext != null)
-			{
-				return string.Format("HTTP/{0}.{1}",
-					_listenerContext.Request.ProtocolVersion.Major,
-					_listenerContext.Request.ProtocolVersion.Minor);
-			}
-			return base.GetHttpVersion();
-		}
-
 		private IPEndPoint RemoteEndPoint
 		{
 			get { return _listenerContext.IfNotNull(x => x.Request.RemoteEndPoint); }
