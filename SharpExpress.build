@@ -2,7 +2,7 @@
 <project xmlns="http://nant.sf.net" name="SharpExpress" default="default">
 
 	<property name="rootdir" value="${project::get-base-directory()}"/>
-	<property name="srcdir" value="${rootdir}/SharpExpress"/>
+	<property name="srcdir" value="${rootdir}/src/SharpExpress"/>
 	
 	<!-- input properties -->
 	<property name="buildroot" value="${rootdir}/build" unless="${property::exists('buildroot')}"/>

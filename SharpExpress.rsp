@@ -6,5 +6,5 @@
 /r:System.Web.Routing.dll
 /r:System.Web.Services.dll
 /o+
-/recurse:./SharpExpress/*.cs
+/recurse:./src/SharpExpress/*.cs
 /out:SharpExpress.dll
