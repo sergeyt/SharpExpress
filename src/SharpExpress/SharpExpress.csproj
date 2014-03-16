@@ -35,7 +35,7 @@
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>..\SharpExpress.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\..\SharpExpress.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="nunit.framework">
@@ -62,7 +62,6 @@
     <Compile Include="MimeType.cs" />
     <Compile Include="MultiHttpHandler.cs" />
     <Compile Include="Properties\CommonAssemblyInfo.cs" />
-    <Compile Include="Properties\VersionInfo.cs" />
     <Compile Include="RequestContextExtensions.cs" />
     <Compile Include="ExpressApplication.cs" />
     <Compile Include="HttpContextImpl.cs" />

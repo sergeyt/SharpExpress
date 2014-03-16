@@ -55,11 +55,8 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\SharpExpress\Properties\CommonAssemblyInfo.cs">
+    <Compile Include="..\..\src\SharpExpress\Properties\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
-    </Compile>
-    <Compile Include="..\..\SharpExpress\Properties\VersionInfo.cs">
-      <Link>Properties\VersionInfo.cs</Link>
     </Compile>
     <Compile Include="AppHttpHandler.cs" />
     <Compile Include="Default.aspx.cs">
@@ -81,6 +78,12 @@
     <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\SharpExpress\SharpExpress.csproj">
+      <Project>{2b31647b-64f8-4a90-a08d-4493a9340455}</Project>
+      <Name>SharpExpress</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
