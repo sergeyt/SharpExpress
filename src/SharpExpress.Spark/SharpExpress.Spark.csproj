@@ -4,14 +4,14 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{2B31647B-64F8-4A90-A08D-4493A9340455}</ProjectGuid>
+    <ProjectGuid>{2101DF34-B5D8-411C-9234-926561140D3B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SharpExpress</RootNamespace>
-    <AssemblyName>SharpExpress</AssemblyName>
+    <RootNamespace>SharpExpress.Spark</RootNamespace>
+    <AssemblyName>SharpExpress.Spark</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">.\</SolutionDir>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -19,7 +19,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;NUNIT</DefineConstants>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -31,51 +31,38 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
-  </PropertyGroup>
-  <PropertyGroup>
-    <AssemblyOriginatorKeyFile>..\..\SharpExpress.snk</AssemblyOriginatorKeyFile>
-  </PropertyGroup>
   <ItemGroup>
     <Reference Include="nunit.framework">
-      <HintPath>packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
+      <HintPath>..\..\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Spark">
+      <HintPath>..\..\packages\Spark.1.7.5.3\lib\NET35\Spark.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Web" />
-    <Reference Include="System.Web.Abstractions" />
-    <Reference Include="System.Web.Extensions" />
-    <Reference Include="System.Web.Routing" />
-    <Reference Include="System.Web.Services" />
     <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AppHost.cs" />
-    <Compile Include="ConvertExtension.cs" />
-    <Compile Include="EmbeddedExtension.cs" />
-    <Compile Include="ExpressFunctionalExtensions.cs" />
-    <Compile Include="Extensions.cs" />
-    <Compile Include="HttpHandlerExtension.cs" />
-    <Compile Include="HttpWorkerRequestImpl.cs" />
-    <Compile Include="IViewEngine.cs" />
-    <Compile Include="MimeType.cs" />
-    <Compile Include="MultiHttpHandler.cs" />
-    <Compile Include="Properties\CommonAssemblyInfo.cs" />
-    <Compile Include="RequestContextExtensions.cs" />
-    <Compile Include="ExpressApplication.cs" />
-    <Compile Include="HttpContextImpl.cs" />
-    <Compile Include="HttpRequestImpl.cs" />
-    <Compile Include="HttpResponseImpl.cs" />
-    <Compile Include="HttpServer.cs" />
+    <Compile Include="..\SharpExpress\Properties\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="WebServiceExtension.cs" />
-    <Compile Include="StaticExtension.cs" />
-    <Compile Include="Tests\MimeTypesFixture.cs" />
+    <Compile Include="SparkEngine.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SharpExpress\SharpExpress.csproj">
+      <Project>{2b31647b-64f8-4a90-a08d-4493a9340455}</Project>
+      <Name>SharpExpress</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Tests\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
