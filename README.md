@@ -26,8 +26,8 @@ Simple API to handle HTTP requests with ASP.NET MVC-like routing inspired by [ex
 var app = new ExpressApplication();
 app.Static("", Environment.CurrentDirectory);
 
-var port = 81;
-using (new HttpServer(app, port, 4))
+var settings = new HttpServerSettings { Port = 81, WorkerCount = 4 };
+using (new HttpServer(app, settings))
 {
 	Console.WriteLine("Listening port {0}. Press enter to stop the server.", port);
 	Console.ReadLine();
@@ -60,9 +60,8 @@ app.Get(
 			y = req.RouteData.Values["y"]
 		}));
 
-var port = 1111;
-var workerCount = 4;
-using (var server = new HttpServer(app, port, workerCount))
+var settings = new HttpServerSettings { Port = 81, WorkerCount = 4 };
+using (new HttpServer(app, settings))
 {
 	Console.WriteLine("Listening port {0}. Press enter to stop the server.", port);
 	Console.ReadLine();
@@ -78,8 +77,8 @@ var app = new ExpressApplication();
 app.Json("math/json/square/{x}", square)
    .Xml("math/xml/square/{x}", square);
 
-var port = 81;
-using (new HttpServer(app, port, 4))
+var settings = new HttpServerSettings { Port = 81, WorkerCount = 4 };
+using (new HttpServer(app, settings))
 {
 	Console.WriteLine("Listening port {0}. Press enter to stop the server.", port);
 	Console.ReadLine();
@@ -107,8 +106,8 @@ internal class MathService
 var app = new ExpressApplication();
 app.WebService<MathService>("math.svc");
 
-var port = 1111;
-using (new HttpServer(app, new HttpServerSettings {Port = port}))
+var settings = new HttpServerSettings { Port = 81, WorkerCount = 4 };
+using (new HttpServer(app, settings))
 {
 	Console.WriteLine("Listening port {0}. Press enter to stop the server.", port);
 	Console.ReadLine();
