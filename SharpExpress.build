@@ -53,7 +53,7 @@
 		<property name="outdir" value="${buildroot}/${config}"/>
 	</target>
 
-	<property name="nunit.framework.dll" value="${srcdir}/packages/NUnit.2.6.3/lib/nunit.framework.dll"/>
+	<property name="nunit.framework.dll" value="${rootdir}/packages/NUnit.2.6.3/lib/nunit.framework.dll"/>
 	
 	<target name="build">
 		<csc target="library" output="${outdir}/${assembly}.dll"
