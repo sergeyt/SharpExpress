@@ -129,6 +129,18 @@ namespace SharpExpress
 
 		private void ProcessRequest(HttpListenerContext context)
 		{
+			try
+			{
+				ProcessRequestInternal(context);
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine(e);
+			}
+		}
+
+		private void ProcessRequestInternal(HttpListenerContext context)
+		{
 			var app = _app as ExpressApplication;
 			if (app != null)
 			{
@@ -177,7 +189,7 @@ namespace SharpExpress
 				{
 					Console.Error.WriteLine(e);
 
-					res.StatusCode = (int) HttpStatusCode.InternalServerError;
+					res.StatusCode = (int)HttpStatusCode.InternalServerError;
 					res.ContentType = "text/plain";
 					res.Write(e.ToString());
 				}

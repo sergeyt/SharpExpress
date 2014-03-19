@@ -55,7 +55,7 @@ namespace SharpExpress
 
 		public static void CopyTo(this Stream stream, Stream target)
 		{
-			var buf = new byte[4*1024];
+			var buf = new byte[stream.Length];
 			int len;
 			while ((len = stream.Read(buf, 0, buf.Length)) > 0)
 			{
