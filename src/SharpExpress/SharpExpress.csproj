@@ -58,6 +58,7 @@
     <Compile Include="ExpressFunctionalExtensions.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="HttpHandlerExtension.cs" />
+    <Compile Include="HttpServerSettings.cs" />
     <Compile Include="HttpWorkerRequestImpl.cs" />
     <Compile Include="Interfaces.cs" />
     <Compile Include="IViewEngine.cs" />

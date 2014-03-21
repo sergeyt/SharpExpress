@@ -6,21 +6,6 @@ using System.Web;
 
 namespace SharpExpress
 {
-	public sealed class HttpServerSettings
-	{
-		public HttpServerSettings()
-		{
-			WorkerCount = 4;
-			VirtualDir = "/";
-			PhisycalDir = Environment.CurrentDirectory;
-		}
-
-		public int Port { get; set; }
-		public int WorkerCount { get; set; }
-		public string VirtualDir { get; set; }
-		public string PhisycalDir { get; set; }
-	}
-
 	/// <summary>
 	/// Micro http server.
 	/// </summary>
@@ -91,10 +76,16 @@ namespace SharpExpress
 		{
 			try
 			{
+				var listener = (HttpListener)ar.AsyncState;
+
+				// If not listening return immediately as this method is called on last time after Close()
+				if (!listener.IsListening)
+					return;
+
+				var context = listener.EndGetContext(ar);
+
 				lock (_queue)
 				{
-					var listener = (HttpListener)ar.AsyncState;
-					var context = listener.EndGetContext(ar);
 					_queue.Enqueue(context);
 					_ready.Set();
 				}
