@@ -12,7 +12,7 @@ namespace SharpExpress
 	/// <summary>
 	/// Implements <see cref="HttpResponseBase"/> wrapping <see cref="HttpListenerResponse"/>.
 	/// </summary>
-	internal sealed class HttpResponseImpl : HttpResponseBase
+	internal sealed class HttpResponseImpl : HttpResponseBase, IResponse
 	{
 		private readonly HttpListenerResponse _response;
 		private TextWriter _output;
@@ -234,6 +234,17 @@ namespace SharpExpress
 		public override NameValueCollection Headers
 		{
 			get { return _response.Headers; }
+		}
+
+		public Stream Body
+		{
+			get { return OutputStream; }
+		}
+
+		public Encoding Encoding
+		{
+			get { return ContentEncoding; }
+			set { ContentEncoding = value; }
 		}
 
 		public override Encoding HeaderEncoding { get; set; }

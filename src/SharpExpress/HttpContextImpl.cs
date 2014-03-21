@@ -3,12 +3,12 @@ using System.Web;
 
 namespace SharpExpress
 {
-	internal sealed class HttpContextImpl : HttpContextBase
+	internal sealed class HttpContextImpl : HttpContextBase, IHttpContext
 	{
 		private readonly HttpListenerContext _context;
 		private readonly HttpServerSettings _settings;
-		private readonly HttpRequestBase _request;
-		private readonly HttpResponseBase _response;
+		private readonly HttpRequestImpl _request;
+		private readonly HttpResponseImpl _response;
 		private HttpContext _httpContext;
 
 		public HttpContextImpl(HttpListenerContext context, HttpServerSettings settings)
@@ -30,6 +30,16 @@ namespace SharpExpress
 		}
 
 		public override HttpResponseBase Response
+		{
+			get { return _response; }
+		}
+
+		IRequest IHttpContext.Request
+		{
+			get { return _request; }
+		}
+
+		IResponse IHttpContext.Response
 		{
 			get { return _response; }
 		}

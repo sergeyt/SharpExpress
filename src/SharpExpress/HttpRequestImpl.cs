@@ -12,7 +12,7 @@ namespace SharpExpress
 	/// <summary>
 	/// Implements <see cref="HttpRequestBase"/> wrapping <see cref="HttpListenerRequest"/>.
 	/// </summary>
-	internal sealed class HttpRequestImpl : HttpRequestBase
+	internal sealed class HttpRequestImpl : HttpRequestBase, IRequest
 	{
 		private readonly HttpListenerRequest _request;
 
@@ -214,6 +214,13 @@ namespace SharpExpress
 		{
 			get { return _request.Headers; }
 		}
+
+		public Stream Body
+		{
+			get { return InputStream; }
+		}
+
+		public Encoding Encoding { get; set; }
 
 		public override NameValueCollection QueryString
 		{
