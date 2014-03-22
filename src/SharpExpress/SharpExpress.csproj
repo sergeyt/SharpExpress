@@ -58,6 +58,7 @@
     <Compile Include="ExpressFunctionalExtensions.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="HttpHandlerExtension.cs" />
+    <Compile Include="HttpListenerImpl.cs" />
     <Compile Include="HttpServerSettings.cs" />
     <Compile Include="HttpWorkerRequestImpl.cs" />
     <Compile Include="Interfaces.cs" />
@@ -68,10 +69,11 @@
     <Compile Include="RequestContextExtensions.cs" />
     <Compile Include="ExpressApplication.cs" />
     <Compile Include="HttpContextImpl.cs" />
-    <Compile Include="HttpRequestImpl.cs" />
-    <Compile Include="HttpResponseImpl.cs" />
     <Compile Include="HttpServer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ServerImpl.cs" />
+    <Compile Include="TcpContextImpl.cs" />
+    <Compile Include="TcpListenerImpl.cs" />
     <Compile Include="WebServiceExtension.cs" />
     <Compile Include="StaticExtension.cs" />
     <Compile Include="Tests\MimeTypesFixture.cs" />

@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Specialized;
+using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Net;
+using System.Net.Sockets;
 using System.Reflection;
 using System.Text;
 using System.Web;
@@ -10,25 +13,22 @@ using System.Web.Caching;
 
 namespace SharpExpress
 {
-	internal sealed class HttpContextImpl : HttpContextBase, IHttpContext
+	internal sealed class TcpContextImpl : HttpContextBase, IHttpContext
 	{
-		private readonly HttpListenerContext _context;
+		private readonly Socket _socket;
 		private readonly HttpServerSettings _settings;
-		private readonly RequestImpl _request;
+		private RequestImpl _request;
 		private readonly ResponseImpl _response;
-		private HttpContext _httpContext;
 
-		public HttpContextImpl(HttpListenerContext context, HttpServerSettings settings)
+		public TcpContextImpl(Socket socket, HttpServerSettings settings)
 		{
-			_context = context;
+			_socket = socket;
 			_settings = settings;
-			_request = new RequestImpl(context.Request);
-			_response = new ResponseImpl(context.Response);
-		}
 
-		public HttpContext HttpContext
-		{
-			get { return _httpContext ?? (_httpContext = new HttpContext(new HttpWorkerRequestImpl(_context, _settings))); }
+			// TODO parse request
+			// _request = new RequestImpl(this);
+
+			_response = new ResponseImpl(socket);
 		}
 
 		public override HttpRequestBase Request
@@ -51,16 +51,31 @@ namespace SharpExpress
 			get { return _response; }
 		}
 
-		/// <summary>
-		/// Implements <see cref="HttpRequestBase"/> wrapping <see cref="HttpListenerRequest"/>.
-		/// </summary>
-		private sealed class RequestImpl : HttpRequestBase, IRequest
+		public bool IsAuthenticated
 		{
-			private readonly HttpListenerRequest _request;
-
-			public RequestImpl(HttpListenerRequest request)
+			get
 			{
-				_request = request;
+				// TODO
+				return true;
+			}
+		}
+
+		private class RequestImpl : HttpRequestBase, IRequest
+		{
+			private readonly TcpContextImpl _context;
+			private readonly string _method;
+			private readonly Uri _url;
+			private NameValueCollection _queryString;
+			private readonly NameValueCollection _headers;
+			private readonly Stream _body;
+
+			public RequestImpl(TcpContextImpl context, string method, Uri url, NameValueCollection headers, Stream body)
+			{
+				_context = context;
+				_method = method;
+				_url = url;
+				_headers = headers;
+				_body = body;
 			}
 
 			public override byte[] BinaryRead(int count)
@@ -76,23 +91,43 @@ namespace SharpExpress
 
 			public override string[] AcceptTypes
 			{
-				get { return _request.AcceptTypes; }
+				get
+				{
+					var val = Get(HttpRequestHeader.Accept);
+					return (from x in val.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+							let s = x.Trim()
+							where s.Length > 0
+							select s).ToArray();
+				}
 			}
 
 			public override string ContentType
 			{
-				get { return _request.ContentType; }
+				get { return Get(HttpRequestHeader.ContentType); }
 				set { throw new NotSupportedException(); }
 			}
 
 			public override int ContentLength
 			{
-				get { return (int)_request.ContentLength64; }
+				get
+				{
+					var s = Get(HttpRequestHeader.ContentLength);
+					int len;
+					if (int.TryParse(s, NumberStyles.Integer, CultureInfo.InvariantCulture, out len))
+					{
+						return len;
+					}
+					return -1;
+				}
 			}
 
 			public override Encoding ContentEncoding
 			{
-				get { return _request.ContentEncoding; }
+				get
+				{
+					// TODO get from headers
+					return Encoding.UTF8;
+				}
 				set { throw new NotSupportedException(); }
 			}
 
@@ -102,17 +137,7 @@ namespace SharpExpress
 				{
 					var list = new HttpCookieCollection();
 
-					foreach (Cookie cookie in _request.Cookies)
-					{
-						list.Add(new HttpCookie(cookie.Name, cookie.Value)
-						{
-							Domain = cookie.Domain,
-							Expires = cookie.Expires,
-							HttpOnly = cookie.HttpOnly,
-							Path = cookie.Path,
-							Secure = cookie.Secure
-						});
-					}
+					// TODO
 
 					return list;
 				}
@@ -122,7 +147,7 @@ namespace SharpExpress
 
 			public override string Path
 			{
-				get { return _request.Url.LocalPath; }
+				get { return _url.LocalPath; }
 			}
 
 			public override string ApplicationPath
@@ -142,12 +167,12 @@ namespace SharpExpress
 
 			public override string PathInfo
 			{
-				get { return _request.Url.LocalPath.TrimStart('/'); }
+				get { return _url.LocalPath.TrimStart('/'); }
 			}
 
 			public override string RawUrl
 			{
-				get { return _request.Url.ToString(); }
+				get { return _url.ToString(); }
 			}
 
 			public override string RequestType { get; set; }
@@ -159,32 +184,43 @@ namespace SharpExpress
 
 			public override Uri Url
 			{
-				get { return _request.Url; }
+				get { return _url; }
 			}
 
 			public override Uri UrlReferrer
 			{
-				get { return _request.UrlReferrer; }
+				get
+				{
+					var s = Get(HttpRequestHeader.Referer);
+					Uri result;
+					if (Uri.TryCreate(s, UriKind.RelativeOrAbsolute, out result))
+						return result;
+					return null;
+				}
 			}
 
 			public override string UserAgent
 			{
-				get { return _request.UserAgent; }
+				get { return Get(HttpRequestHeader.UserAgent); }
 			}
 
 			public override string UserHostAddress
 			{
-				get { return _request.UserHostAddress; }
+				get
+				{
+					// TODO get from socket LocalEndPoint
+					return "";
+				}
 			}
 
 			public override string UserHostName
 			{
-				get { return _request.UserHostName; }
+				get { return Get(HttpRequestHeader.Host); }
 			}
 
 			public override NameValueCollection Headers
 			{
-				get { return _request.Headers; }
+				get { return _headers; }
 			}
 
 			public Stream Body
@@ -196,46 +232,55 @@ namespace SharpExpress
 
 			public override NameValueCollection QueryString
 			{
-				get { return _request.QueryString; }
+				get { return _queryString; }
 			}
 
 			public override string HttpMethod
 			{
-				get { return _request.HttpMethod; }
+				get { return _method; }
 			}
 
 			public override Stream InputStream
 			{
-				get { return _request.InputStream; }
+				get { return _body; }
 			}
 
 			public override bool IsAuthenticated
 			{
-				get { return _request.IsAuthenticated; }
+				get { return _context.IsAuthenticated; }
 			}
 
 			public override bool IsLocal
 			{
-				get { return _request.IsLocal; }
+				get
+				{
+					// TODO
+					// return LocalEndPoint.Address == RemoteEndPoint.Address;
+					return false;
+				}
 			}
 
 			public override bool IsSecureConnection
 			{
-				get { return _request.IsSecureConnection; }
+				get { return false; }
+			}
+
+			private string Get(HttpRequestHeader header)
+			{
+				return _headers.Get(header.ToString());
 			}
 		}
 
-		/// <summary>
-		/// Implements <see cref="HttpResponseBase"/> wrapping <see cref="HttpListenerResponse"/>.
-		/// </summary>
-		private sealed class ResponseImpl : HttpResponseBase, IResponse
+		private class ResponseImpl : HttpResponseBase, IResponse
 		{
-			private readonly HttpListenerResponse _response;
 			private TextWriter _output;
+			private readonly Stream _outputStream;
+			private readonly NameValueCollection _headers;
 
-			public ResponseImpl(HttpListenerResponse response)
+			public ResponseImpl(Socket socket)
 			{
-				_response = response;
+				_outputStream = new MemoryStream();
+				_headers = new NameValueCollection();
 			}
 
 			public override void AddCacheItemDependency(string cacheKey)
@@ -268,17 +313,16 @@ namespace SharpExpress
 
 			public override void AddHeader(string name, string value)
 			{
-				_response.AddHeader(name, value);
+				_headers.Set(name, value);
 			}
 
 			public override void AppendCookie(HttpCookie cookie)
 			{
-				_response.AppendCookie(new Cookie(cookie.Name, cookie.Value, cookie.Path, cookie.Domain));
 			}
 
 			public override void AppendHeader(string name, string value)
 			{
-				_response.AppendHeader(name, value);
+				_headers.Set(name, value);
 			}
 
 			public override void AppendToLog(string param)
@@ -314,7 +358,6 @@ namespace SharpExpress
 			public override void Close()
 			{
 				_output = null;
-				_response.Close();
 			}
 
 			public override void DisableKernelCache()
@@ -426,17 +469,9 @@ namespace SharpExpress
 			public override string CacheControl { get; set; }
 			public override string Charset { get; set; }
 
-			public override Encoding ContentEncoding
-			{
-				get { return _response.ContentEncoding; }
-				set { _response.ContentEncoding = value; }
-			}
+			public override Encoding ContentEncoding { get; set; }
 
-			public override string ContentType
-			{
-				get { return _response.ContentType; }
-				set { _response.ContentType = value; }
-			}
+			public override string ContentType { get; set; }
 
 			public override HttpCookieCollection Cookies
 			{
@@ -449,7 +484,7 @@ namespace SharpExpress
 
 			public override NameValueCollection Headers
 			{
-				get { return _response.Headers; }
+				get { return _headers; }
 			}
 
 			public Stream Body
@@ -484,31 +519,15 @@ namespace SharpExpress
 
 			public override Stream OutputStream
 			{
-				get { return _response.OutputStream; }
+				get { return _outputStream; }
 			}
 
-			public override string Status
-			{
-				get;
-				set;
-			}
-
-			public override int StatusCode
-			{
-				get { return _response.StatusCode; }
-				set { _response.StatusCode = value; }
-			}
-
-			public override string StatusDescription
-			{
-				get { return _response.StatusDescription; }
-				set { _response.StatusDescription = value; }
-			}
-
+			public override string Status { get; set; }
+			public override int StatusCode { get; set; }
+			public override string StatusDescription { get; set; }
 			public override int SubStatusCode { get; set; }
 
 			public override bool SuppressContent { get; set; }
-
 			public override bool TrySkipIisCustomErrors { get; set; }
 		}
 	}
