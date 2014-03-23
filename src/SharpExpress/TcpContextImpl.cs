@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Globalization;
 using System.IO;
@@ -15,19 +16,12 @@ namespace SharpExpress
 {
 	internal sealed class TcpContextImpl : HttpContextBase, IHttpContext
 	{
-		private readonly Socket _socket;
-		private readonly HttpServerSettings _settings;
-		private RequestImpl _request;
+		private readonly RequestImpl _request;
 		private readonly ResponseImpl _response;
 
 		public TcpContextImpl(Socket socket, HttpServerSettings settings)
 		{
-			_socket = socket;
-			_settings = settings;
-
-			// TODO parse request
-			// _request = new RequestImpl(this);
-
+			_request = new RequestImpl(this, socket);
 			_response = new ResponseImpl(socket);
 		}
 
@@ -60,23 +54,42 @@ namespace SharpExpress
 			}
 		}
 
+		#region class RequestImpl
+
 		private class RequestImpl : HttpRequestBase, IRequest
 		{
 			private readonly TcpContextImpl _context;
 			private readonly string _method;
 			private readonly Uri _url;
+			private string _protocol;
 			private NameValueCollection _queryString;
 			private readonly NameValueCollection _headers;
 			private readonly Stream _body;
-
-			public RequestImpl(TcpContextImpl context, string method, Uri url, NameValueCollection headers, Stream body)
+			
+			public RequestImpl(TcpContextImpl context, Socket socket)
 			{
 				_context = context;
-				_method = method;
-				_url = url;
-				_headers = headers;
-				_body = body;
+
+				var headerBytes = socket.ReadRequestBytes(32 * 1024);
+				var headerLines = headerBytes.ReadLines(Encoding.UTF8).ToArray();
+				var firstLine = headerLines[0].Split(' ');
+
+				_method = firstLine[0];
+				_url = new Uri(firstLine[1]);
+				_protocol = firstLine.Length == 3 ? firstLine[2] : "HTTP/1.0";
+				_queryString = _url.Query.ParseQueryString().ToNameValueCollection();
+				
+				_headers = (
+					from l in headerLines.Skip(1)
+					let i = l.IndexOf(':')
+					where i >= 0
+					let key = l.Substring(0, i).Trim()
+					let val = l.Substring(i + 1).Trim()
+					select new KeyValuePair<string, string>(key, val)
+					).ToNameValueCollection();
 			}
+
+			#region HttpRequestBase Members
 
 			public override byte[] BinaryRead(int count)
 			{
@@ -265,11 +278,17 @@ namespace SharpExpress
 				get { return false; }
 			}
 
+			#endregion
+
 			private string Get(HttpRequestHeader header)
 			{
 				return _headers.Get(header.ToString());
 			}
 		}
+
+		#endregion
+
+		#region class ResponseImpl
 
 		private class ResponseImpl : HttpResponseBase, IResponse
 		{
@@ -530,5 +549,7 @@ namespace SharpExpress
 			public override bool SuppressContent { get; set; }
 			public override bool TrySkipIisCustomErrors { get; set; }
 		}
+
+		#endregion
 	}
 }

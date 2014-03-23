@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -8,6 +10,18 @@ namespace SharpExpress
 {
 	internal static class Extensions
 	{
+		public static NameValueCollection ToNameValueCollection(this IEnumerable<KeyValuePair<string, string>> pairs)
+		{
+			var collection = new NameValueCollection(StringComparer.OrdinalIgnoreCase);
+
+			foreach (var pair in pairs)
+			{
+				collection.Set(pair.Key, pair.Value);
+			}
+
+			return collection;
+		}
+
 		public static TR IfNotNull<T, TR>(this T obj, Func<T, TR> func) where T : class
 		{
 			return obj != null ? func(obj) : default (TR);

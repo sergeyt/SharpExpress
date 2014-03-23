@@ -65,6 +65,7 @@
     <Compile Include="IViewEngine.cs" />
     <Compile Include="MimeType.cs" />
     <Compile Include="MultiHttpHandler.cs" />
+    <Compile Include="ParseExtensions.cs" />
     <Compile Include="Properties\CommonAssemblyInfo.cs" />
     <Compile Include="RequestContextExtensions.cs" />
     <Compile Include="ExpressApplication.cs" />
@@ -72,8 +73,10 @@
     <Compile Include="HttpServer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServerImpl.cs" />
+    <Compile Include="SocketExtensions.cs" />
     <Compile Include="TcpContextImpl.cs" />
     <Compile Include="TcpListenerImpl.cs" />
+    <Compile Include="Tests\ParseTests.cs" />
     <Compile Include="WebServiceExtension.cs" />
     <Compile Include="StaticExtension.cs" />
     <Compile Include="Tests\MimeTypesFixture.cs" />
