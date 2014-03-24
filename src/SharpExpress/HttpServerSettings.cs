@@ -15,5 +15,6 @@ namespace SharpExpress
 		public int WorkerCount { get; set; }
 		public string VirtualDir { get; set; }
 		public string PhisycalDir { get; set; }
+		public bool AspNetHost { get; set; }
 	}
 }

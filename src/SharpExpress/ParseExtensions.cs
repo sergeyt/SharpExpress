@@ -8,6 +8,11 @@ namespace SharpExpress
 	{
 		public static IEnumerable<string> ReadLines(this byte[] bytes, Encoding encoding)
 		{
+			if (bytes == null)
+			{
+				yield break;
+			}
+
 			var start = 0;
 			for (var i = 0; i < bytes.Length; i++)
 			{

@@ -21,7 +21,8 @@ namespace AspHost
 				.ToDictionary(x => x.Key, x => x.Value, StringComparer.InvariantCultureIgnoreCase);
 
 			var port = options.Get("port", 1111);
-			using (new HttpServer(new MyHandler(), new HttpServerSettings{Port = port}))
+			var settings = new HttpServerSettings{Port = port, AspNetHost = true};
+			using (new HttpServer(new MyHandler(), settings))
 			{
 				Console.WriteLine("Listening port {0}. Press enter to stop the server.", port);
 				Console.ReadLine();

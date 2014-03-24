@@ -21,7 +21,7 @@ namespace SharpExpress
 
 		public TcpContextImpl(Socket socket, HttpServerSettings settings)
 		{
-			_request = new RequestImpl(this, socket);
+			_request = new RequestImpl(this, socket, settings);
 			_response = new ResponseImpl(socket);
 		}
 
@@ -66,18 +66,30 @@ namespace SharpExpress
 			private readonly NameValueCollection _headers;
 			private readonly Stream _body;
 			
-			public RequestImpl(TcpContextImpl context, Socket socket)
+			public RequestImpl(TcpContextImpl context, Socket socket, HttpServerSettings settings)
 			{
 				_context = context;
 
 				var headerBytes = socket.ReadRequestBytes(32 * 1024);
 				var headerLines = headerBytes.ReadLines(Encoding.UTF8).ToArray();
-				var firstLine = headerLines[0].Split(' ');
 
-				_method = firstLine[0];
-				_url = new Uri(firstLine[1]);
-				_protocol = firstLine.Length == 3 ? firstLine[2] : "HTTP/1.0";
-				_queryString = _url.Query.ParseQueryString().ToNameValueCollection();
+				var baseUri = string.Format("http://localhost:{0}", settings.Port);
+
+				if (headerLines.Length > 0)
+				{
+					var firstLine = headerLines[0].Split(' ');
+					_method = firstLine[0];
+					_url = new Uri(baseUri + firstLine[1]);
+					_protocol = firstLine.Length == 3 ? firstLine[2] : "HTTP/1.0";
+					_queryString = _url.Query.ParseQueryString().ToNameValueCollection(StringComparer.OrdinalIgnoreCase);
+				}
+				else
+				{
+					_method = "GET";
+					_url = new Uri(baseUri + "/404");
+					_protocol = "HTTP/1.0";
+					_queryString = new NameValueCollection();
+				}
 				
 				_headers = (
 					from l in headerLines.Skip(1)
@@ -86,7 +98,7 @@ namespace SharpExpress
 					let key = l.Substring(0, i).Trim()
 					let val = l.Substring(i + 1).Trim()
 					select new KeyValuePair<string, string>(key, val)
-					).ToNameValueCollection();
+					).ToNameValueCollection(StringComparer.OrdinalIgnoreCase);
 			}
 
 			#region HttpRequestBase Members
@@ -292,14 +304,16 @@ namespace SharpExpress
 
 		private class ResponseImpl : HttpResponseBase, IResponse
 		{
+			private readonly Socket _socket;
 			private TextWriter _output;
-			private readonly Stream _outputStream;
-			private readonly NameValueCollection _headers;
+			private MemoryStream _body;
+			private readonly NameValueCollection _headers = new NameValueCollection(StringComparer.OrdinalIgnoreCase);
 
 			public ResponseImpl(Socket socket)
 			{
-				_outputStream = new MemoryStream();
-				_headers = new NameValueCollection();
+				_socket = socket;
+				_body = new MemoryStream();
+				_output = new StreamWriter(_body);
 			}
 
 			public override void AddCacheItemDependency(string cacheKey)
@@ -355,7 +369,7 @@ namespace SharpExpress
 
 			public override void BinaryWrite(byte[] buffer)
 			{
-				OutputStream.Write(buffer, 0, buffer.Length);
+				_body.Write(buffer, 0, buffer.Length);
 			}
 
 			public override void Clear()
@@ -366,17 +380,17 @@ namespace SharpExpress
 
 			public override void ClearContent()
 			{
-				base.ClearContent();
+				_body = new MemoryStream();
+				_output = new StreamWriter(_body);
 			}
 
 			public override void ClearHeaders()
 			{
-				base.ClearHeaders();
+				_headers.Clear();
 			}
 
 			public override void Close()
 			{
-				_output = null;
 			}
 
 			public override void DisableKernelCache()
@@ -385,16 +399,13 @@ namespace SharpExpress
 
 			public override void End()
 			{
+				Send();
 			}
 
 			public override void Flush()
 			{
-				if (_output != null)
-				{
-					_output.Flush();
-				}
-
-				OutputStream.Flush();
+				_output.Flush();
+				_body.Flush();
 			}
 
 			public override void Pics(string value)
@@ -531,14 +542,14 @@ namespace SharpExpress
 
 			public override TextWriter Output
 			{
-				get { return _output ?? (_output = new StreamWriter(OutputStream)); }
+				get { return _output; }
 			}
 
 			public override string RedirectLocation { get; set; }
 
 			public override Stream OutputStream
 			{
-				get { return _outputStream; }
+				get { return _body; }
 			}
 
 			public override string Status { get; set; }
@@ -548,6 +559,43 @@ namespace SharpExpress
 
 			public override bool SuppressContent { get; set; }
 			public override bool TrySkipIisCustomErrors { get; set; }
+
+			private void Send()
+			{
+				const string eol = "\r\n";
+				var contentLength = _body.Length;
+				
+				var sb = new StringBuilder();
+				sb.Append("HTTP/1.1 " + StatusCode + " " + HttpWorkerRequest.GetStatusDescription(StatusCode) + eol);
+				sb.Append("Server: Express/" + AssemblyInfo.Version + eol);
+				sb.Append("Date: " + DateTime.Now.ToUniversalTime().ToString("R", DateTimeFormatInfo.InvariantInfo) + eol);
+
+				if (contentLength >= 0)
+				{
+					sb.Append("Content-Length: " + contentLength + eol);
+				}
+
+				foreach (string key in _headers)
+				{
+					var val = _headers[key];
+					sb.Append(key + ": " + val + eol);
+				}
+
+				sb.Append(eol);
+
+				var header = Encoding.UTF8.GetBytes(sb.ToString());
+				var body = _body.ToArray();
+				
+				try
+				{
+					// TODO send as single packet if needed
+					_socket.Send(header);
+					_socket.Send(body);
+				}
+				catch (SocketException)
+				{
+				}
+			}
 		}
 
 		#endregion

@@ -10,9 +10,9 @@ namespace SharpExpress
 {
 	internal static class Extensions
 	{
-		public static NameValueCollection ToNameValueCollection(this IEnumerable<KeyValuePair<string, string>> pairs)
+		public static NameValueCollection ToNameValueCollection(this IEnumerable<KeyValuePair<string, string>> pairs, StringComparer comparer)
 		{
-			var collection = new NameValueCollection(StringComparer.OrdinalIgnoreCase);
+			var collection = new NameValueCollection(comparer);
 
 			foreach (var pair in pairs)
 			{

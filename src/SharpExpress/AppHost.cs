@@ -29,6 +29,10 @@ namespace SharpExpress
 			InitHostingEnvironment();
 		}
 
+		public void Init()
+		{
+		}
+
 		private void InitHostingEnvironment()
 		{
 			try

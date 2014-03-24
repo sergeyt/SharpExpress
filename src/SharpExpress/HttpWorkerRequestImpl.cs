@@ -132,6 +132,7 @@ namespace SharpExpress
 		{
 			_context.Response.OutputStream.Close();
 			_context.Response.Close();
+			_context.Response.End();
 		}
 
 		public override int ReadEntityBody(byte[] buffer, int size)
