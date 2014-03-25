@@ -12,6 +12,7 @@ namespace SharpExpress
 		private readonly HttpServerSettings _settings;
 		private NamedPipeServerStream _server;
 		private bool _processing;
+		private object _lock = new object();
 
 		public PipeListener(IHttpHandler handler, HttpServerSettings settings)
 		{
@@ -54,14 +55,15 @@ namespace SharpExpress
 				Thread.Sleep(10);
 				return new WaitResult(state);
 			}
+			Disconnect();
 			return _server.BeginWaitForConnection(callback, state);
 		}
 
 		public object End(IAsyncResult ar)
 		{
 			if (ar is WaitResult) return this;
-			_server.EndWaitForConnection(ar);
 			_processing = true;
+			_server.EndWaitForConnection(ar);
 			return this;
 		}
 
@@ -70,14 +72,27 @@ namespace SharpExpress
 			try
 			{
 				var channel = new PipeChannel(_server);
+
 				channel.ProcessRequest(_handler, _settings);
-				_server.Disconnect();
+
+				Disconnect();
 			}
 			catch (Exception e)
 			{
 				Console.WriteLine(e);
 			}
 			_processing = false;
+		}
+
+		private void Disconnect()
+		{
+			lock (_lock)
+			{
+				if (_server.IsConnected)
+				{
+					_server.Disconnect();
+				}
+			}
 		}
 
 		private class PipeChannel : IHttpChannel
