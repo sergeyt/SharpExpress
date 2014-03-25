@@ -4,7 +4,7 @@ using System.Web;
 
 namespace SharpExpress
 {
-	internal sealed class HttpListenerImpl : IListener
+	internal sealed class HttpListenerImpl : IHttpListener
 	{
 		private readonly IHttpHandler _app;
 		private readonly HttpServerSettings _settings;
@@ -71,7 +71,7 @@ namespace SharpExpress
 
 		private void ProcessExpressRequest(HttpListenerContext context, ExpressApplication app)
 		{
-			var wrapper = new HttpContextImpl(context, _settings);
+			var wrapper = new HttpListenerContextImpl(context, _settings);
 			var res = wrapper.Response;
 
 			using (res.OutputStream)

@@ -15,21 +15,30 @@ namespace SharpExpress
 			if (app == null) throw new ArgumentNullException("app");
 			if (settings == null) throw new ArgumentNullException("settings");
 
-			IListener listener;
-
 			// init asp.net host
 			if (settings.AspNetHost)
 			{
 				var appHost = new AppHost(settings);
 				appHost.Init();
-				// TODO support TCP listener for asp.net hosting
-				listener = new HttpListenerImpl(app, settings);
-			}
-			else
-			{
-				listener = new TcpListenerImpl(app, settings);
 			}
 
+			IHttpListener listener;
+			
+			switch (settings.Mode)
+			{
+				case HttpServerMode.TcpListener:
+					listener = new TcpListenerImpl(app, settings);
+					break;
+				case HttpServerMode.HttpListener:
+					listener = new HttpListenerImpl(app, settings);
+					break;
+				case HttpServerMode.Pipes:
+					listener = new PipeListener(app, settings);
+					break;
+				default:
+					throw new ArgumentOutOfRangeException();
+			}
+			
 			_server = new ServerImpl(listener, settings.WorkerCount);
 		}
 

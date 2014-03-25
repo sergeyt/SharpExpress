@@ -45,7 +45,26 @@ namespace ConsoleServer
 				.WebService<MathService>("math.svc");
 
 			var port = options.Get("port", 1111);
-			using (new HttpServer(app, new HttpServerSettings {Port = port}))
+			var mode = options.Get("mode", "tcp");
+
+			var settings = new HttpServerSettings {Port = port};
+
+			switch (mode.ToLowerInvariant())
+			{
+				case "http":
+					settings.Mode = HttpServerMode.HttpListener;
+					break;
+
+				case "pipe":
+					settings.Mode = HttpServerMode.Pipes;
+					break;
+
+				default:
+					settings.Mode = HttpServerMode.TcpListener;
+					break;
+			}
+
+			using (new HttpServer(app, settings))
 			{
 				Console.WriteLine("Listening port {0}. Press enter to stop the server.", port);
 				Console.ReadLine();

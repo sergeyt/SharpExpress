@@ -6,7 +6,7 @@ using System.Web;
 
 namespace SharpExpress
 {
-	public interface IMessage
+	public interface IHttpMessage
 	{
 		Stream Body { get; }
 		Encoding Encoding { get; set; }
@@ -14,14 +14,14 @@ namespace SharpExpress
 		HttpCookieCollection Cookies { get; }
 	}
 
-	public interface IRequest : IMessage
+	public interface IHttpRequest : IHttpMessage
 	{
 		string HttpMethod { get; }
 		Uri Url { get; }
 		NameValueCollection QueryString { get; }
 	}
 
-	public interface IResponse : IMessage
+	public interface IHttpResponse : IHttpMessage
 	{
 		string Status { get; set; }
 		int StatusCode { get; set; }
@@ -37,7 +37,7 @@ namespace SharpExpress
 
 	public interface IHttpContext
 	{
-		IRequest Request { get; }
-		IResponse Response { get; }
+		IHttpRequest Request { get; }
+		IHttpResponse Response { get; }
 	}
 }

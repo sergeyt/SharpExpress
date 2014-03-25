@@ -2,6 +2,13 @@ using System;
 
 namespace SharpExpress
 {
+	public enum HttpServerMode
+	{
+		TcpListener,
+		HttpListener,
+		Pipes
+	}
+
 	public sealed class HttpServerSettings
 	{
 		public HttpServerSettings()
@@ -11,6 +18,7 @@ namespace SharpExpress
 			PhisycalDir = Environment.CurrentDirectory;
 		}
 
+		public HttpServerMode Mode { get; set; }
 		public int Port { get; set; }
 		public int WorkerCount { get; set; }
 		public string VirtualDir { get; set; }

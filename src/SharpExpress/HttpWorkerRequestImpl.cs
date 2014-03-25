@@ -26,7 +26,7 @@ namespace SharpExpress
 				null)
 		{
 			_listenerContext = context;
-			_context = new HttpContextImpl(context, settings);
+			_context = new HttpListenerContextImpl(context, settings);
 		}
 
 		public HttpWorkerRequestImpl(HttpContextBase context, HttpServerSettings settings)

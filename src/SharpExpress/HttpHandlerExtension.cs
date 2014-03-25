@@ -48,7 +48,7 @@ namespace SharpExpress
 
 		internal static HttpContext Unwrap(this HttpContextBase context)
 		{
-			var impl = context as HttpContextImpl;
+			var impl = context as HttpListenerContextImpl;
 			if (impl != null)
 			{
 				return impl.HttpContext;

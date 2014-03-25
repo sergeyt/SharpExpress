@@ -1,12 +1,23 @@
 ﻿using System.Collections.Generic;
-using System.Text;
 using System.Web;
 
 namespace SharpExpress
 {
+	internal struct Range
+	{
+		public readonly int Start;
+		public readonly int Length;
+
+		public Range(int start, int length)
+		{
+			Start = start;
+			Length = length;
+		}
+	}
+
 	internal static class ParseExtensions
 	{
-		public static IEnumerable<string> ReadLines(this byte[] bytes, Encoding encoding)
+		public static IEnumerable<Range> GetLineRanges(this byte[] bytes)
 		{
 			if (bytes == null)
 			{
@@ -23,14 +34,14 @@ namespace SharpExpress
 					{
 						len--;
 					}
-					yield return encoding.GetString(bytes, start, len);
+					yield return new Range(start, len);
 					start = i + 1;
 				}
 			}
 
 			if (start < bytes.Length)
 			{
-				yield return encoding.GetString(bytes, start, bytes.Length - start);
+				yield return new Range(start, bytes.Length - start);
 			}
 		}
 

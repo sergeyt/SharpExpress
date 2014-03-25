@@ -4,33 +4,19 @@ using System.Threading;
 
 namespace SharpExpress
 {
-	internal interface IListener
-	{
-		bool IsListening { get; }
-
-		void Start();
-		void Stop();
-		void Close();
-
-		IAsyncResult Begin(AsyncCallback callback, object state);
-		object End(IAsyncResult ar);
-
-		void ProcessRequest(object context);
-	}
-
 	/// <summary>
 	/// Common server implementation.
 	/// </summary>
 	internal sealed class ServerImpl
 	{
-		private readonly IListener _listener;
+		private readonly IHttpListener _listener;
 		private readonly Thread _listenerThread;
 		private readonly Thread[] _workers;
 		private readonly ManualResetEvent _stop = new ManualResetEvent(false);
 		private readonly ManualResetEvent _ready = new ManualResetEvent(false);
 		private readonly Queue<object> _queue = new Queue<object>();
 
-		public ServerImpl(IListener listener, int workerCount)
+		public ServerImpl(IHttpListener listener, int workerCount)
 		{
 			if (listener == null) throw new ArgumentNullException("listener");
 
@@ -66,7 +52,7 @@ namespace SharpExpress
 			while (_listener.IsListening)
 			{
 				var context = _listener.Begin(OnContextReady, _listener);
-				if (0 == WaitHandle.WaitAny(new[] { _stop, context.AsyncWaitHandle }))
+				if (0 == WaitHandle.WaitAny(new[] {_stop, context.AsyncWaitHandle}))
 					return;
 			}
 		}
@@ -75,13 +61,11 @@ namespace SharpExpress
 		{
 			try
 			{
-				var listener = (IListener)ar.AsyncState;
-
 				// If not listening return immediately as this method is called on last time after Close()
-				if (!listener.IsListening)
+				if (!_listener.IsListening)
 					return;
 
-				var context = listener.End(ar);
+				var context = _listener.End(ar);
 
 				lock (_queue)
 				{

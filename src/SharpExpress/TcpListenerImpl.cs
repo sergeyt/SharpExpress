@@ -5,16 +5,24 @@ using System.Web;
 
 namespace SharpExpress
 {
-	internal sealed class TcpListenerImpl : IListener
+	/// <summary>
+	/// Implements <see cref="IHttpListener"/> using <see cref="TcpListener"/>.
+	/// </summary>
+	internal sealed class TcpListenerImpl : IHttpListener
 	{
-		private readonly IHttpHandler _app;
+		private readonly IHttpHandler _handler;
 		private readonly HttpServerSettings _settings;
 		private readonly TcpListener _listener;
 
-		public TcpListenerImpl(IHttpHandler app, HttpServerSettings settings)
+		public TcpListenerImpl(IHttpHandler handler, HttpServerSettings settings)
 		{
-			_app = app;
+			if (handler == null) throw new ArgumentNullException("handler");
+			if (settings == null) throw new ArgumentNullException("settings");
+
+			_handler = handler;
 			_settings = settings;
+
+			// TODO endpoint setting
 			_listener = new TcpListener(new IPEndPoint(IPAddress.Loopback, settings.Port));
 		}
 
@@ -22,6 +30,9 @@ namespace SharpExpress
 
 		public void Start()
 		{
+			if (IsListening)
+				throw new InvalidOperationException("Server is already started!");
+
 			_listener.Start();
 			IsListening = true;
 		}
@@ -51,7 +62,8 @@ namespace SharpExpress
 			try
 			{
 				var socket = (Socket)context;
-				ProcessRequestInternal(socket);
+				var channel = new SocketChannel(socket);
+				channel.ProcessRequest(_handler, _settings);
 				socket.Close();
 			}
 			catch (Exception e)
@@ -60,44 +72,25 @@ namespace SharpExpress
 			}
 		}
 
-		private void ProcessRequestInternal(Socket socket)
+		private class SocketChannel : IHttpChannel
 		{
-			var context = new TcpContextImpl(socket, _settings);
-			var res = context.Response;
+			private readonly Socket _socket;
+			private readonly HttpStream _stream;
 
-			using (res.OutputStream)
+			public SocketChannel(Socket socket)
 			{
-				try
-				{
-					var app = _app as ExpressApplication;
-					if (app != null)
-					{
-						if (!app.Process(context))
-						{
-							res.StatusCode = (int) HttpStatusCode.NotFound;
-							res.StatusDescription = "Not found";
-							res.ContentType = "text/plain";
-							res.Write("Resource not found!");
-						}
+				_socket = socket;
+				_stream = new HttpStream((buffer, offset, count) => socket.Receive(buffer, offset, count, SocketFlags.None));
+			}
 
-						res.Flush();
-						res.End();
-					}
-					else
-					{
-						var workerRequest = new HttpWorkerRequestImpl(context, _settings);
-						_app.ProcessRequest(new HttpContext(workerRequest));
-						workerRequest.EndOfRequest();
-					}
-				}
-				catch (Exception e)
-				{
-					Console.Error.WriteLine(e);
+			public HttpStream Receive()
+			{
+				return _stream;
+			}
 
-					res.StatusCode = (int)HttpStatusCode.InternalServerError;
-					res.ContentType = "text/plain";
-					res.Write(e.ToString());
-				}
+			public void Send(byte[] packet)
+			{
+				_socket.Send(packet);
 			}
 		}
 	}
