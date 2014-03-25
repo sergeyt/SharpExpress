@@ -17,8 +17,8 @@ namespace SharpExpress
 		void Stop();
 		void Close();
 
-		IAsyncResult Begin(AsyncCallback callback, object state);
-		object End(IAsyncResult ar);
+		IAsyncResult BeginClient(AsyncCallback callback, object state);
+		object EndClient(IAsyncResult ar);
 
 		void ProcessRequest(object context);
 	}

@@ -35,12 +35,12 @@ namespace SharpExpress
 			_listener.Close();
 		}
 
-		public IAsyncResult Begin(AsyncCallback callback, object state)
+		public IAsyncResult BeginClient(AsyncCallback callback, object state)
 		{
 			return _listener.BeginGetContext(callback, state);
 		}
 
-		public object End(IAsyncResult ar)
+		public object EndClient(IAsyncResult ar)
 		{
 			return _listener.EndGetContext(ar);
 		}

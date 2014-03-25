@@ -48,7 +48,7 @@ namespace SharpExpress
 		{
 		}
 
-		public IAsyncResult Begin(AsyncCallback callback, object state)
+		public IAsyncResult BeginClient(AsyncCallback callback, object state)
 		{
 			if (_processing)
 			{
@@ -59,7 +59,7 @@ namespace SharpExpress
 			return _server.BeginWaitForConnection(callback, state);
 		}
 
-		public object End(IAsyncResult ar)
+		public object EndClient(IAsyncResult ar)
 		{
 			if (ar is WaitResult) return this;
 			_processing = true;

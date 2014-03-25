@@ -51,7 +51,7 @@ namespace SharpExpress
 		{
 			while (_listener.IsListening)
 			{
-				var context = _listener.Begin(OnContextReady, _listener);
+				var context = _listener.BeginClient(OnContextReady, _listener);
 				if (0 == WaitHandle.WaitAny(new[] {_stop, context.AsyncWaitHandle}))
 					return;
 			}
@@ -65,7 +65,7 @@ namespace SharpExpress
 				if (!_listener.IsListening)
 					return;
 
-				var context = _listener.End(ar);
+				var context = _listener.EndClient(ar);
 
 				lock (_queue)
 				{

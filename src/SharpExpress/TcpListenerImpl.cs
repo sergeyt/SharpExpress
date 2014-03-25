@@ -47,12 +47,12 @@ namespace SharpExpress
 		{
 		}
 
-		public IAsyncResult Begin(AsyncCallback callback, object state)
+		public IAsyncResult BeginClient(AsyncCallback callback, object state)
 		{
 			return _listener.BeginAcceptSocket(callback, state);
 		}
 
-		public object End(IAsyncResult ar)
+		public object EndClient(IAsyncResult ar)
 		{
 			return _listener.EndAcceptSocket(ar);
 		}
