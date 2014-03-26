@@ -30,7 +30,7 @@ namespace SharpExpress
 		private readonly IDictionary<string, RouteCollection> _routes =
 			new Dictionary<string, RouteCollection>(StringComparer.OrdinalIgnoreCase);
 
-		private ExpressApplication Register(string verb, string url, Action<RequestContext> handler)
+		private ExpressApplication Register(string verb, string route, Action<RequestContext> handler)
 		{
 			RouteCollection routes;
 			if (!_routes.TryGetValue(verb, out routes))
@@ -38,18 +38,48 @@ namespace SharpExpress
 				routes = new RouteCollection();
 				_routes.Add(verb, routes);
 			}
-			routes.Add(new Route(url, new RouteHandler(handler)));
+			routes.Add(new Route(route, new RouteHandler(handler)));
 			return this;
 		}
 
-		public ExpressApplication Get(string url, Action<RequestContext> handler)
+		/// <summary>
+		/// Registers GET handler on given route.
+		/// </summary>
+		public ExpressApplication Get(string route, Action<RequestContext> handler)
 		{
-			return Register("GET", url, handler);
+			return Register("GET", route, handler);
 		}
 
-		public ExpressApplication Post(string url, Action<RequestContext> handler)
+		/// <summary>
+		/// Registers POST handler on given route.
+		/// </summary>
+		public ExpressApplication Post(string route, Action<RequestContext> handler)
 		{
-			return Register("POST", url, handler);
+			return Register("POST", route, handler);
+		}
+
+		/// <summary>
+		/// Registers HEAD handler on given route.
+		/// </summary>
+		public ExpressApplication Head(string route, Action<RequestContext> handler)
+		{
+			return Register("HEAD", route, handler);
+		}
+
+		/// <summary>
+		/// Registers PUT handler on given route.
+		/// </summary>
+		public ExpressApplication Put(string route, Action<RequestContext> handler)
+		{
+			return Register("PUT", route, handler);
+		}
+
+		/// <summary>
+		/// Registers DELETE handler on given route.
+		/// </summary>
+		public ExpressApplication Delete(string route, Action<RequestContext> handler)
+		{
+			return Register("DELETE", route, handler);
 		}
 
 		#endregion
