@@ -75,6 +75,14 @@ namespace SharpExpress
 		}
 
 		/// <summary>
+		/// Registers UPDATE handler on given route.
+		/// </summary>
+		public ExpressApplication Update(string route, Action<RequestContext> handler)
+		{
+			return Register("UPDATE", route, handler);
+		}
+
+		/// <summary>
 		/// Registers DELETE handler on given route.
 		/// </summary>
 		public ExpressApplication Delete(string route, Action<RequestContext> handler)
