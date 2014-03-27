@@ -40,8 +40,7 @@ namespace ConsoleServer
 							y = req.RouteData.Values["y"]
 						})
 				)
-				.Json("math/json/square/{x}", square)
-				.Xml("math/xml/square/{x}", square)
+				.Get("math/square/{x}", square)
 				.WebService<MathService>("math.svc");
 
 			var port = options.Get("port", 1111);

@@ -6,6 +6,7 @@ using System.Web.Routing;
 namespace SharpExpress
 {
 	// TODO support default values for arguments
+	// TODO Post extensions (issue #11)
 
 	public static class ExpressFunctionalExtensions
 	{
@@ -15,26 +16,36 @@ namespace SharpExpress
 			return (from Match m in regex.Matches(url) select m.Groups["p"].Value).ToArray();
 		}
 
-		private static ExpressApplication Get<TResult>(this ExpressApplication app, string url,
-			Func<TResult> func, Action<RequestContext, TResult> send)
+		private static void Send(RequestContext req, object data)
 		{
-			return app.Get(url, req => send(req, func()));
+			var type = req.HttpContext.Request.ContentType ?? "";
+			if (type.IndexOf("xml", StringComparison.OrdinalIgnoreCase) >= 0)
+			{
+				req.Xml(data);
+				return;
+			}
+
+			req.Json(data);
 		}
 
-		private static ExpressApplication Get<T1, TResult>(this ExpressApplication app, string url,
-			Func<T1, TResult> func, Action<RequestContext, TResult> send)
+		public static ExpressApplication Get<TResult>(this ExpressApplication app, string url, Func<TResult> func)
+		{
+			return app.Get(url, req => Send(req, func()));
+		}
+
+		public static ExpressApplication Get<T1, TResult>(this ExpressApplication app, string url, Func<T1, TResult> func)
 		{
 			var p = ParseRouteParams(url);
 			return app.Get(url, req =>
 			{
 				var arg1 = req.Param<T1>(p[0]);
 				var result = func(arg1);
-				send(req, result);
+				Send(req, result);
 			});
 		}
 
-		private static ExpressApplication Get<T1, T2, TResult>(this ExpressApplication app, string url,
-			Func<T1, T2, TResult> func, Action<RequestContext, TResult> send)
+		public static ExpressApplication Get<T1, T2, TResult>(this ExpressApplication app, string url,
+			Func<T1, T2, TResult> func)
 		{
 			var p = ParseRouteParams(url);
 			return app.Get(url, req =>
@@ -42,12 +53,12 @@ namespace SharpExpress
 				var arg1 = req.Param<T1>(p[0]);
 				var arg2 = req.Param<T2>(p[1]);
 				var result = func(arg1, arg2);
-				send(req, result);
+				Send(req, result);
 			});
 		}
 
-		private static ExpressApplication Get<T1, T2, T3, TResult>(this ExpressApplication app, string url,
-			Func<T1, T2, T3, TResult> func, Action<RequestContext, TResult> send)
+		public static ExpressApplication Get<T1, T2, T3, TResult>(this ExpressApplication app, string url,
+			Func<T1, T2, T3, TResult> func)
 		{
 			var p = ParseRouteParams(url);
 			return app.Get(url, req =>
@@ -56,48 +67,8 @@ namespace SharpExpress
 				var arg2 = req.Param<T2>(p[1]);
 				var arg3 = req.Param<T3>(p[2]);
 				var result = func(arg1, arg2, arg3);
-				send(req, result);
+				Send(req, result);
 			});
-		}
-
-		public static ExpressApplication Json<TResult>(this ExpressApplication app, string url, Func<TResult> func)
-		{
-			return app.Get(url, func, (req, res) => req.Json(res));
-		}
-
-		public static ExpressApplication Json<T1, TResult>(this ExpressApplication app, string url, Func<T1, TResult> func)
-		{
-			return app.Get(url, func, (req, res) => req.Json(res));
-		}
-
-		public static ExpressApplication Json<T1, T2, TResult>(this ExpressApplication app, string url, Func<T1, T2, TResult> func)
-		{
-			return app.Get(url, func, (req, res) => req.Json(res));
-		}
-
-		public static ExpressApplication Json<T1, T2, T3, TResult>(this ExpressApplication app, string url, Func<T1, T2, T3, TResult> func)
-		{
-			return app.Get(url, func, (req, res) => req.Json(res));
-		}
-
-		public static ExpressApplication Xml<TResult>(this ExpressApplication app, string url, Func<TResult> func)
-		{
-			return app.Get(url, func, (req, res) => req.Xml(res));
-		}
-
-		public static ExpressApplication Xml<T1, TResult>(this ExpressApplication app, string url, Func<T1, TResult> func)
-		{
-			return app.Get(url, func, (req, res) => req.Xml(res));
-		}
-
-		public static ExpressApplication Xml<T1, T2, TResult>(this ExpressApplication app, string url, Func<T1, T2, TResult> func)
-		{
-			return app.Get(url, func, (req, res) => req.Xml(res));
-		}
-
-		public static ExpressApplication Xml<T1, T2, T3, TResult>(this ExpressApplication app, string url, Func<T1, T2, T3, TResult> func)
-		{
-			return app.Get(url, func, (req, res) => req.Xml(res));
 		}
 	}
 }
