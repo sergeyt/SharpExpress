@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System;
+using System.Globalization;
+using System.IO;
 using Spark;
 
 namespace SharpExpress.Spark
@@ -48,8 +50,13 @@ namespace SharpExpress.Spark
 
 		public string Eval(string expression, string format)
 		{
-			// TODO
-			return null;
+			var val = Eval(expression);
+			var formattable = val as IFormattable;
+			if (formattable != null)
+			{
+				return formattable.ToString(format, CultureInfo.CurrentCulture);
+			}
+			return val != null ? val.ToString() : "";
 		}
 	}
 }
