@@ -54,6 +54,7 @@
   <ItemGroup>
     <Compile Include="AppHost.cs" />
     <Compile Include="ConvertExtension.cs" />
+    <Compile Include="CorsExtension.cs" />
     <Compile Include="EmbeddedExtension.cs" />
     <Compile Include="ExpressFunctionalExtensions.cs" />
     <Compile Include="Extensions.cs" />

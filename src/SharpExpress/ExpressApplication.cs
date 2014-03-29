@@ -90,6 +90,14 @@ namespace SharpExpress
 			return Register("DELETE", route, handler);
 		}
 
+		/// <summary>
+		/// Registers OPTIONS handler on given route.
+		/// </summary>
+		public ExpressApplication Options(string route, Action<RequestContext> handler)
+		{
+			return Register("OPTIONS", route, handler);
+		}
+
 		#endregion
 
 		#region IHttpHandler Impl
