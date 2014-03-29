@@ -98,6 +98,16 @@ namespace SharpExpress
 			return Register("OPTIONS", route, handler);
 		}
 
+		/// <summary>
+		/// Registers handler on given route for any http method.
+		/// </summary>
+		public ExpressApplication All(string route, Action<RequestContext> handler)
+		{
+			string[] verbs = {"GET", "POST", "HEAD", "PUT", "UPDATE", "DELETE", "OPTIONS"};
+			Array.ForEach(verbs, verb => Register(verb, route, handler));
+			return this;
+		}
+
 		#endregion
 
 		#region IHttpHandler Impl

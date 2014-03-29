@@ -68,6 +68,7 @@
     <Compile Include="IViewEngine.cs" />
     <Compile Include="MimeType.cs" />
     <Compile Include="MultiHttpHandler.cs" />
+    <Compile Include="NestExtension.cs" />
     <Compile Include="ParseExtensions.cs" />
     <Compile Include="PipeListener.cs" />
     <Compile Include="ProcessRequestExtension.cs" />
