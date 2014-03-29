@@ -6,7 +6,6 @@ using System.Web.Routing;
 namespace SharpExpress
 {
 	// TODO support default values for arguments
-	// TODO Post extensions (issue #11)
 
 	public static class ExpressFunctionalExtensions
 	{
@@ -67,6 +66,16 @@ namespace SharpExpress
 				var arg2 = req.Param<T2>(p[1]);
 				var arg3 = req.Param<T3>(p[2]);
 				var result = func(arg1, arg2, arg3);
+				Send(req, result);
+			});
+		}
+
+		public static ExpressApplication Post<T, TResult>(this ExpressApplication app, string url, Func<T, TResult> func)
+		{
+			return app.Post(url, req =>
+			{
+				var arg = req.ParseJson<T>();
+				var result = func(arg);
 				Send(req, result);
 			});
 		}

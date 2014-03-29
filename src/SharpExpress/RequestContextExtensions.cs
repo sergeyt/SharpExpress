@@ -91,5 +91,15 @@ namespace SharpExpress
 				return (IDictionary<string, object>) serializer.DeserializeObject(json);
 			}
 		}
+
+		public static T ParseJson<T>(this RequestContext req)
+		{
+			using (var reader = new StreamReader(req.HttpContext.Request.InputStream))
+			{
+				var json = reader.ReadToEnd();
+				var serializer = new JavaScriptSerializer();
+				return serializer.Deserialize<T>(json);
+			}
+		}
 	}
 }
