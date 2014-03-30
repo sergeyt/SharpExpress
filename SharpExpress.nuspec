@@ -2,14 +2,13 @@
 <package>
 	<metadata>
 		<id>SharpExpress</id>
-		<version>0.4.3.0</version>
+		<version>0.5.0.0</version>
 		<authors>Sergey Todyshev (stodyshev@gmail.com)</authors>
 		<owners>Sergey Todyshev</owners>
 		<licenseUrl>http://opensource.org/licenses/MIT</licenseUrl>
 		<projectUrl>https://github.com/sergeyt/SharpExpress</projectUrl>
 		<requireLicenseAcceptance>false</requireLicenseAcceptance>
-		<description>Simple HTTP handler with ASP.NET MVC-like routing inspired by express.js</description>
-		<releaseNotes>Initial release.</releaseNotes>
+		<description>Simple API to handle HTTP requests with ASP.NET MVC-like routing inspired by express.js</description>
 		<copyright>Copyright 2014</copyright>
 		<tags>web http routing server</tags>
 		<frameworkAssemblies>
