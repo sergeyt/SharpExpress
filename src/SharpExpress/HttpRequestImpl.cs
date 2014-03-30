@@ -19,8 +19,8 @@ namespace SharpExpress
 		private readonly HttpContextImpl _context;
 		private readonly string _method;
 		private readonly Uri _url;
-		private string _protocol;
-		private NameValueCollection _queryString;
+		private readonly string _protocol;
+		private readonly NameValueCollection _queryString;
 		private readonly NameValueCollection _headers;
 		private readonly Stream _body;
 			
@@ -67,7 +67,7 @@ namespace SharpExpress
 		public override byte[] BinaryRead(int count)
 		{
 			var buf = new byte[count];
-			InputStream.Read(buf, 0, count);
+			_body.Read(buf, 0, count);
 			return buf;
 		}
 
@@ -156,7 +156,7 @@ namespace SharpExpress
 
 		public override int TotalBytes
 		{
-			get { return (int)InputStream.Length; }
+			get { return (int)_body.Length; }
 		}
 
 		public override Uri Url
@@ -202,7 +202,7 @@ namespace SharpExpress
 
 		public Stream Body
 		{
-			get { return InputStream; }
+			get { return _body; }
 		}
 
 		public Encoding Encoding { get; set; }
