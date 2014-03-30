@@ -69,18 +69,9 @@ namespace SharpExpress
 
 		public void ProcessRequest(object context)
 		{
-			try
-			{
-				var channel = new PipeChannel(_server);
-
-				channel.ProcessRequest(_handler, _settings);
-
-				Disconnect();
-			}
-			catch (Exception e)
-			{
-				Console.WriteLine(e);
-			}
+			var channel = new PipeChannel(_server);
+			channel.ProcessRequest(_handler, _settings);
+			Disconnect();
 			_processing = false;
 		}
 

@@ -59,17 +59,10 @@ namespace SharpExpress
 
 		public void ProcessRequest(object context)
 		{
-			try
-			{
-				var socket = (Socket)context;
-				var channel = new SocketChannel(socket);
-				channel.ProcessRequest(_handler, _settings);
-				socket.Close();
-			}
-			catch (Exception e)
-			{
-				Console.WriteLine(e);
-			}
+			var socket = (Socket) context;
+			var channel = new SocketChannel(socket);
+			channel.ProcessRequest(_handler, _settings);
+			socket.Close();
 		}
 
 		private class SocketChannel : IHttpChannel

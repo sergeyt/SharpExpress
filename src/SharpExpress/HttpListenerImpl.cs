@@ -47,26 +47,16 @@ namespace SharpExpress
 
 		public void ProcessRequest(object context)
 		{
-			try
-			{
-				ProcessRequestInternal((HttpListenerContext)context);
-			}
-			catch (Exception e)
-			{
-				Console.WriteLine(e);
-			}
-		}
+			var ctx = (HttpListenerContext) context;
 
-		private void ProcessRequestInternal(HttpListenerContext context)
-		{
 			var app = _app as ExpressApplication;
 			if (app != null)
 			{
-				ProcessExpressRequest(context, app);
+				ProcessExpressRequest(ctx, app);
 				return;
 			}
 
-			ProcessWorkerRequest(context);
+			ProcessWorkerRequest(ctx);
 		}
 
 		private void ProcessExpressRequest(HttpListenerContext context, ExpressApplication app)

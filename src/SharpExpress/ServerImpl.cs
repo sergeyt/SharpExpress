@@ -15,6 +15,8 @@ namespace SharpExpress
 		private readonly ManualResetEvent _stop = new ManualResetEvent(false);
 		private readonly ManualResetEvent _ready = new ManualResetEvent(false);
 		private readonly Queue<object> _queue = new Queue<object>();
+		private readonly object _lock = new object();
+		private bool _stoped;
 
 		public ServerImpl(IHttpListener listener, int workerCount)
 		{
@@ -37,14 +39,17 @@ namespace SharpExpress
 		public void Stop()
 		{
 			_stop.Set();
-
 			_listenerThread.Join();
 
 			foreach (var worker in _workers)
 				worker.Join();
 
-			_listener.Stop();
-			_listener.Close();
+			lock (_lock)
+			{
+				_listener.Stop();
+				_listener.Close();
+				_stoped = true;
+			}
 		}
 
 		private void Listen()
@@ -61,14 +66,13 @@ namespace SharpExpress
 		{
 			try
 			{
-				// If not listening return immediately as this method is called on last time after Close()
-				if (!_listener.IsListening)
-					return;
-
-				var context = _listener.EndClient(ar);
-
-				lock (_queue)
+				lock (_lock)
 				{
+					// If not listening return immediately as this method is called on last time after Close()
+					if (!_listener.IsListening || _stoped)
+						return;
+
+					var context = _listener.EndClient(ar);
 					_queue.Enqueue(context);
 					_ready.Set();
 				}
@@ -84,7 +88,7 @@ namespace SharpExpress
 			while (0 == WaitHandle.WaitAny(wait))
 			{
 				object context;
-				lock (_queue)
+				lock (_lock)
 				{
 					if (_queue.Count > 0)
 					{
@@ -97,7 +101,14 @@ namespace SharpExpress
 					}
 				}
 
-				_listener.ProcessRequest(context);
+				try
+				{
+					_listener.ProcessRequest(context);
+				}
+				catch (Exception e)
+				{
+					Console.WriteLine(e);
+				}
 			}
 		}
 	}
