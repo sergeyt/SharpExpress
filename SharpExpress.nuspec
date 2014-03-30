@@ -18,9 +18,13 @@
 			<frameworkAssembly assemblyName="System.Web"/>
 			<frameworkAssembly assemblyName="System.Web.Abstractions"/>
 			<frameworkAssembly assemblyName="System.Web.Routing"/>
+			<frameworkAssembly assemblyName="System.Web.Extension"/>
+			<frameworkAssembly assemblyName="System.Web.Services"/>
 		</frameworkAssemblies>
 	</metadata>
 	<files>
-		<file src="build/release/SharpExpress.dll" target="lib/net35-client"/>
+		<file src="build/release/SharpExpress.dll" target="lib/net35"/>
+		<file src="build/release/SharpExpress.dll" target="lib/net40"/>
+		<file src="build/release/SharpExpress.dll" target="lib/net45"/>
 	</files>
 </package>
