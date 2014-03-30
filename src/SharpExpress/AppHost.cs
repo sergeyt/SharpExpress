@@ -3,6 +3,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Web;
 using System.Web.Configuration;
@@ -123,17 +124,19 @@ namespace SharpExpress
 
 			public string GetMachineConfigFilename()
 			{
-				throw new NotImplementedException();
+				var dir = Path.Combine(RuntimeEnvironment.GetRuntimeDirectory(), "Config");
+				return Path.Combine(dir, "machine.config");
 			}
 
 			public string GetRootWebConfigFilename()
 			{
-				throw new NotImplementedException();
+				return null;
 			}
 
 			public void GetPathConfigFilename(string siteID, string path, out string directory, out string baseName)
 			{
-				throw new NotImplementedException();
+				directory = Environment.CurrentDirectory;
+				baseName = "web.config";
 			}
 
 			public void GetDefaultSiteNameAndID(out string siteName, out string siteID)
