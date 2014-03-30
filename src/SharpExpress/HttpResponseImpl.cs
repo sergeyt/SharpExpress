@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Web;
 using System.Web.Caching;
@@ -214,7 +215,11 @@ namespace SharpExpress
 
 		public override Encoding ContentEncoding { get; set; }
 
-		public override string ContentType { get; set; }
+		public override string ContentType
+		{
+			get { return _headers.Get(HttpRequestHeader.ContentType); }
+			set { _headers.Set(HttpRequestHeader.ContentType, value); }
+		}
 
 		public override HttpCookieCollection Cookies
 		{
@@ -297,6 +302,9 @@ namespace SharpExpress
 			sb.Append(eol);
 
 			var header = Encoding.UTF8.GetBytes(sb.ToString());
+
+			_output.Flush();
+			_body.Flush();
 			var body = _body.ToArray();
 				
 			try

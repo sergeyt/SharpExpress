@@ -83,6 +83,13 @@ namespace SharpExpress
 				{
 					_firstPacket = null;
 				}
+
+				if (len >= count)
+				{
+					return len;
+				}
+
+				count -= len;
 			}
 
 			len += _read(buffer, offset + len, count);

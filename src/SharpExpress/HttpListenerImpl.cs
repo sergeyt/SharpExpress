@@ -96,6 +96,7 @@ namespace SharpExpress
 				}
 
 				res.Flush();
+				res.End();
 			}
 		}
 

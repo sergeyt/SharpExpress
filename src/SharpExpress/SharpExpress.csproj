@@ -58,6 +58,7 @@
     <Compile Include="EmbeddedExtension.cs" />
     <Compile Include="ExpressFunctionalExtensions.cs" />
     <Compile Include="Extensions.cs" />
+    <Compile Include="HttpExtensions.cs" />
     <Compile Include="HttpHandlerExtension.cs" />
     <Compile Include="HttpListenerImpl.cs" />
     <Compile Include="HttpServerSettings.cs" />

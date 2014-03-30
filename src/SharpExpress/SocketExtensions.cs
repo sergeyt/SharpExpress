@@ -1,5 +1,4 @@
-﻿using System;
-using System.Net.Sockets;
+﻿using System.Net.Sockets;
 
 namespace SharpExpress
 {
@@ -7,21 +6,13 @@ namespace SharpExpress
 	{
 		public static int WaitForRequestBytes(this Socket socket)
 		{
-			int availBytes = 0;
-
 			try
 			{
-				if (socket.Available == 0)
+				if (socket.Available == 0 && socket.Connected)
 				{
 					socket.Poll(100000, SelectMode.SelectRead);
-
-					if (socket.Available == 0 && socket.Connected)
-					{
-						socket.Poll(30000000, SelectMode.SelectRead);
-					}
 				}
-
-				availBytes = socket.Available;
+				return socket.Available;
 			}
 			// ReSharper disable EmptyGeneralCatchClause
 			catch
@@ -29,46 +20,24 @@ namespace SharpExpress
 			{
 			}
 
-			return availBytes;
+			return 0;
 		}
 
-		public static byte[] ReadRequestBytes(this Socket socket, int maxBytes)
+		public static int Read(this Socket socket, byte[] buffer, int offset, int count)
 		{
+			var availBytes = socket.WaitForRequestBytes();
+			if (availBytes == 0)
+			{
+				return 0;
+			}
+
 			try
 			{
-				var availBytes = socket.WaitForRequestBytes();
-				if (availBytes == 0)
-				{
-					return null;
-				}
-
-				if (availBytes > maxBytes)
-				{
-					availBytes = maxBytes;
-				}
-
-				int received = 0;
-				var buffer = new byte[availBytes];
-				if (availBytes > 0)
-				{
-					received = socket.Receive(buffer, 0, availBytes, SocketFlags.None);
-				}
-
-				if (received < availBytes)
-				{
-					var bytes = new byte[received];
-					if (received > 0)
-					{
-						Buffer.BlockCopy(buffer, 0, bytes, 0, received);
-					}
-					buffer = bytes;
-				}
-
-				return buffer;
+				return socket.Receive(buffer, offset, count, SocketFlags.None);
 			}
 			catch
 			{
-				return null;
+				return 0;
 			}
 		}
 	}

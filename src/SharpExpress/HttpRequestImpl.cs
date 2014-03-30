@@ -79,7 +79,7 @@ namespace SharpExpress
 		{
 			get
 			{
-				var val = Get(HttpRequestHeader.Accept);
+				var val = _headers.Get(HttpRequestHeader.Accept);
 				return (from x in val.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
 					let s = x.Trim()
 					where s.Length > 0
@@ -89,8 +89,8 @@ namespace SharpExpress
 
 		public override string ContentType
 		{
-			get { return Get(HttpRequestHeader.ContentType); }
-			set { throw new NotSupportedException(); }
+			get { return _headers.Get(HttpRequestHeader.ContentType); }
+			set { _headers.Set(HttpRequestHeader.ContentType, value); }
 		}
 
 		public override int ContentLength
@@ -168,7 +168,7 @@ namespace SharpExpress
 		{
 			get
 			{
-				var s = Get(HttpRequestHeader.Referer);
+				var s = _headers.Get(HttpRequestHeader.Referer);
 				Uri result;
 				if (Uri.TryCreate(s, UriKind.RelativeOrAbsolute, out result))
 					return result;
@@ -178,7 +178,7 @@ namespace SharpExpress
 
 		public override string UserAgent
 		{
-			get { return Get(HttpRequestHeader.UserAgent); }
+			get { return _headers.Get(HttpRequestHeader.UserAgent); }
 		}
 
 		public override string UserHostAddress
@@ -192,7 +192,7 @@ namespace SharpExpress
 
 		public override string UserHostName
 		{
-			get { return Get(HttpRequestHeader.Host); }
+			get { return _headers.Get(HttpRequestHeader.Host); }
 		}
 
 		public override NameValueCollection Headers
@@ -244,14 +244,9 @@ namespace SharpExpress
 
 		#endregion
 
-		private string Get(HttpRequestHeader header)
-		{
-			return _headers.Get(header.ToString());
-		}
-
 		private int GetContentLength()
 		{
-			var s = Get(HttpRequestHeader.ContentLength);
+			var s = _headers.Get(HttpRequestHeader.ContentLength);
 			int len;
 			return int.TryParse(s, NumberStyles.Integer, CultureInfo.InvariantCulture, out len) ? len : 0;
 		}

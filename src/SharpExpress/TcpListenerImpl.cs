@@ -80,7 +80,7 @@ namespace SharpExpress
 			public SocketChannel(Socket socket)
 			{
 				_socket = socket;
-				_stream = new HttpStream((buffer, offset, count) => socket.Receive(buffer, offset, count, SocketFlags.None));
+				_stream = new HttpStream((buffer, offset, count) => socket.Read(buffer, offset, count));
 			}
 
 			public HttpStream Receive()
