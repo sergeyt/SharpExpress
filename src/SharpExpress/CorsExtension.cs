@@ -5,7 +5,7 @@
 	/// </summary>
 	public static class CorsExtension
 	{
-		public static ExpressApplication Cors(this ExpressApplication app, string url)
+		public static ExpressApplication EnableCors(this ExpressApplication app, string url)
 		{
 			return app.Options(url, req =>
 			{
@@ -16,9 +16,9 @@
 			});
 		}
 
-		public static ExpressApplication Cors(this ExpressApplication app)
+		public static ExpressApplication EnableCors(this ExpressApplication app)
 		{
-			return app.Cors("{*}");
+			return app.EnableCors("{*}");
 		}
 	}
 }
