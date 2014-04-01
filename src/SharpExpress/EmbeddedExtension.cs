@@ -58,6 +58,7 @@ namespace SharpExpress
 
 		private static string Combine(string prefix, string suffix)
 		{
+			if (string.IsNullOrEmpty(prefix)) return suffix;
 			return prefix.EndsWith("/") ? prefix + suffix : prefix + "/" + suffix;
 		}
 	}
