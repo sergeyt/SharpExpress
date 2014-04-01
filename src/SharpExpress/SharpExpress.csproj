@@ -38,6 +38,9 @@
     <AssemblyOriginatorKeyFile>..\..\SharpExpress.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Moq">
+      <HintPath>..\..\packages\Moq.4.2.1402.2112\lib\net35\Moq.dll</HintPath>
+    </Reference>
     <Reference Include="nunit.framework">
       <HintPath>packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
     </Reference>
@@ -74,6 +77,7 @@
     <Compile Include="PipeListener.cs" />
     <Compile Include="ProcessRequestExtension.cs" />
     <Compile Include="Properties\CommonAssemblyInfo.cs" />
+    <Compile Include="RequestBase.cs" />
     <Compile Include="RequestContextExtensions.cs" />
     <Compile Include="ExpressApplication.cs" />
     <Compile Include="HttpListenerContextImpl.cs" />
@@ -85,6 +89,7 @@
     <Compile Include="SocketExtensions.cs" />
     <Compile Include="HttpContextImpl.cs" />
     <Compile Include="TcpListenerImpl.cs" />
+    <Compile Include="Tests\ExpressApplicationTests.cs" />
     <Compile Include="Tests\ParseTests.cs" />
     <Compile Include="WebServiceExtension.cs" />
     <Compile Include="StaticExtension.cs" />

@@ -1,4 +1,5 @@
 using System.Collections.Specialized;
+using System.Globalization;
 using System.Net;
 
 namespace SharpExpress
@@ -13,6 +14,13 @@ namespace SharpExpress
 		public static void Set(this NameValueCollection headers, HttpRequestHeader header, string value)
 		{
 			headers.Set(ToString(header), value);
+		}
+
+		public static int GetContentLength(this NameValueCollection headers)
+		{
+			var s = headers.Get(HttpRequestHeader.ContentLength);
+			int len;
+			return int.TryParse(s, NumberStyles.Integer, CultureInfo.InvariantCulture, out len) ? len : 0;
 		}
 
 		private static string ToString(HttpRequestHeader value)

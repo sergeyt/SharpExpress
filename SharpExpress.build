@@ -53,7 +53,9 @@
 		<property name="outdir" value="${buildroot}/${config}"/>
 	</target>
 
+	<!-- TODO read from packages.config -->
 	<property name="nunit.framework.dll" value="${rootdir}/packages/NUnit.2.6.3/lib/nunit.framework.dll"/>
+	<property name="moq.dll" value="${rootdir}/packages/Moq.4.2.1402.2112/lib/net35/moq.dll"/>
 	
 	<target name="build">
 		<csc target="library" output="${outdir}/${assembly}.dll"
@@ -69,6 +71,7 @@
 				<include name="System.Web.Routing.dll"/>
 				<include name="System.Web.Services.dll"/>
 				<include name="${nunit.framework.dll}"/>
+				<include name="${moq.dll}"/>
 			</references>
 			<sources basedir="${srcdir}">
 				<include name="**/*.cs"/>

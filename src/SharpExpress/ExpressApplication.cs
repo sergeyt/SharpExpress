@@ -114,6 +114,14 @@ namespace SharpExpress
 
 		public bool Process(HttpContextBase context)
 		{
+			if (context == null) throw new ArgumentNullException("context");
+
+			if (context.Request == null)
+				return false;
+
+			if (string.IsNullOrEmpty(context.Request.HttpMethod))
+				return false;
+
 			RouteCollection routes;
 			if (!_routes.TryGetValue(context.Request.HttpMethod, out routes))
 			{
