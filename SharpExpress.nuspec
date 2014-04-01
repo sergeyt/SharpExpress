@@ -2,7 +2,7 @@
 <package>
 	<metadata>
 		<id>SharpExpress</id>
-		<version>0.5.0.0</version>
+		<version>0.5.1.0</version>
 		<authors>Sergey Todyshev (stodyshev@gmail.com)</authors>
 		<owners>Sergey Todyshev</owners>
 		<licenseUrl>http://opensource.org/licenses/MIT</licenseUrl>
@@ -17,7 +17,7 @@
 			<frameworkAssembly assemblyName="System.Web"/>
 			<frameworkAssembly assemblyName="System.Web.Abstractions"/>
 			<frameworkAssembly assemblyName="System.Web.Routing"/>
-			<frameworkAssembly assemblyName="System.Web.Extension"/>
+			<frameworkAssembly assemblyName="System.Web.Extensions"/>
 			<frameworkAssembly assemblyName="System.Web.Services"/>
 		</frameworkAssemblies>
 	</metadata>
