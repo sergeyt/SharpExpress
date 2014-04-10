@@ -5,7 +5,7 @@
 /r:System.Web.Extensions.dll
 /r:System.Web.Routing.dll
 /r:System.Web.Services.dll
-/r:packages/Moq.4.2.1402.2112/lib/net35/Moq.dll
+/r:packages\Moq.4.2.1402.2112\lib\net35\Moq.dll
 /o+
 /recurse:./src/SharpExpress/*.cs
 /out:SharpExpress.dll
