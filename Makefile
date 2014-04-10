@@ -3,8 +3,9 @@ all: test
 get-deps:
 	bash get-nuget
 	echo 'getting dependencies'
+	# TODO use packages.config
 	bash nuget install Moq
-	ls
+	cp ./Moq.4.2.1402.2112/lib/net35/Moq.dll ./Moq.dll
 
 compile: get-deps
 	gmcs @SharpExpress.rsp
