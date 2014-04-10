@@ -77,7 +77,7 @@
     <Compile Include="PipeListener.cs" />
     <Compile Include="ProcessRequestExtension.cs" />
     <Compile Include="Properties\CommonAssemblyInfo.cs" />
-    <Compile Include="RequestBase.cs" />
+    <Compile Include="HttpRequestBaseImpl.cs" />
     <Compile Include="RequestContextExtensions.cs" />
     <Compile Include="ExpressApplication.cs" />
     <Compile Include="HttpListenerContextImpl.cs" />

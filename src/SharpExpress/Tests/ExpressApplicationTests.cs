@@ -26,11 +26,11 @@ namespace SharpExpress.Tests
 			var app = new ExpressApplication();
 			app.Get("test", req => req.Text("test"));
 
-			var request = new Mock<RequestBase>();
+			var request = new Mock<HttpRequestBaseImpl> {CallBase = true};
 			request.Setup(x => x.HttpMethod).Returns("GET");
 			request.Setup(x => x.Url).Returns(new Uri("http://localhost/test"));
 			request.Setup(x => x.Headers).Returns(new NameValueCollection());
-
+			
 			var response = new Mock<HttpResponseBase>();
 
 			var ctx = new Mock<HttpContextBase>();

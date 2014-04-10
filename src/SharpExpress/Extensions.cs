@@ -13,13 +13,16 @@ namespace SharpExpress
 		public static NameValueCollection ToNameValueCollection(this IEnumerable<KeyValuePair<string, string>> pairs, StringComparer comparer)
 		{
 			var collection = new NameValueCollection(comparer);
+			collection.AddRange(pairs);
+			return collection;
+		}
 
+		public static void AddRange(this NameValueCollection collection, IEnumerable<KeyValuePair<string, string>> pairs)
+		{
 			foreach (var pair in pairs)
 			{
 				collection.Set(pair.Key, pair.Value);
 			}
-
-			return collection;
 		}
 
 		public static TR IfNotNull<T, TR>(this T obj, Func<T, TR> func) where T : class

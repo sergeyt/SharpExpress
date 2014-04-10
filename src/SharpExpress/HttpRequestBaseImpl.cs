@@ -10,17 +10,26 @@ using System.Web;
 namespace SharpExpress
 {
 	/// <summary>
-	/// Base request.
+	/// Base implementation of <see cref="HttpRequestBase"/> with minimum methods to override.
 	/// </summary>
-	internal abstract class RequestBase : HttpRequestBase, IHttpRequest
+	internal abstract class HttpRequestBaseImpl : HttpRequestBase, IHttpRequest
 	{
+		protected readonly NameValueCollection _headers = new NameValueCollection(StringComparer.OrdinalIgnoreCase);
 		private NameValueCollection _queryString;
 
+		protected HttpRequestBaseImpl()
+		{
+			Body = Stream.Null;
+		}
+
 		// required members to be implemented
-		public abstract override string HttpMethod { get; }
-		public abstract override Uri Url { get; }
-		public abstract override NameValueCollection Headers { get; }
-		public abstract Stream Body { get; }
+		public override string HttpMethod { get { return Method ?? "GET"; } }
+		public override Uri Url { get { return Uri; } }
+		public override NameValueCollection Headers { get { return _headers; } }
+		public Stream Body { get; protected set; }
+
+		protected string Method { get; set; }
+		protected Uri Uri { get; set; }
 
 		public override Stream InputStream
 		{
