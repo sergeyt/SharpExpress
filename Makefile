@@ -3,7 +3,7 @@ all: test
 get-deps:
 	bash get-nuget
 	echo 'getting dependencies'
-	bash nuget install -OutputDirectory packages Moq
+	bash nuget install Moq
 
 compile: get-deps
 	gmcs @SharpExpress.rsp
