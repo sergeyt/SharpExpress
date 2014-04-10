@@ -10,6 +10,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{944BFE
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{AB2468AF-7954-46F0-867B-59D64C231193}"
 	ProjectSection(SolutionItems) = preProject
+		LICENSE = LICENSE
+		Makefile = Makefile
 		README.md = README.md
 		SharpExpress.build = SharpExpress.build
 		SharpExpress.nuspec = SharpExpress.nuspec

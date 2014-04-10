@@ -1,0 +1,5 @@
+#!/bin/sh
+echo 'setting up nuget'
+mozroots --import --sync
+wget -O nuget.exe 'http://az320820.vo.msecnd.net/downloads/nuget.exe'
+wget -O Microsoft.Build.dll https://dl.dropbox.com/u/103746479/Microsoft.Build.dll
