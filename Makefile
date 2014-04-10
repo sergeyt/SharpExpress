@@ -1,15 +1,13 @@
 all: test
 
-get-nuget:
+get-deps:
 	bash get-nuget
-
-get-deps: get-nuget
 	echo 'getting dependencies'
 	bash nuget install -OutputDirectory packages Moq
 
-compile: get-nuget get-deps
+compile: get-deps
 	gmcs @SharpExpress.rsp
 
-test: get-nuget get-deps
+test: get-deps
 	gmcs -pkg:nunit /define:NUNIT @SharpExpress.rsp
 	nunit-console SharpExpress.dll
