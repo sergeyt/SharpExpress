@@ -3,7 +3,7 @@
 
 # SharpExpress
 
-Simple API to handle HTTP requests with ASP.NET MVC-like routing inspired by [express.js](http://expressjs.com/)
+Functional API to process HTTP requests with ASP.NET MVC-like routing inspired by [express.js](http://expressjs.com/)
 
 ## Features
 * Lightweight library - now ~164kb
