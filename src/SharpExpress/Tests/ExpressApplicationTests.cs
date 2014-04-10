@@ -1,6 +1,4 @@
-﻿using System.Collections.Specialized;
-using System.IO;
-#if NUNIT
+﻿#if NUNIT
 using System;
 using System.Web;
 
@@ -27,9 +25,7 @@ namespace SharpExpress.Tests
 			app.Get("test", req => req.Text("test"));
 
 			var request = new Mock<HttpRequestBaseImpl> {CallBase = true};
-			request.Setup(x => x.HttpMethod).Returns("GET");
 			request.Setup(x => x.Url).Returns(new Uri("http://localhost/test"));
-			request.Setup(x => x.Headers).Returns(new NameValueCollection());
 			
 			var response = new Mock<HttpResponseBase>();
 
