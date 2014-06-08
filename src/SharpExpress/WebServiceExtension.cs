@@ -8,7 +8,7 @@ namespace SharpExpress
 	/// <summary>
 	/// Middleware to host web services.
 	/// </summary>
-	internal static class WebServiceExtension
+	public static class WebServiceExtension
 	{
 		public static ExpressApplication WebService<T>(this ExpressApplication app, string urlPrefix)
 		{
