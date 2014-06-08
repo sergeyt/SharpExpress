@@ -92,6 +92,7 @@
 	<target name="rebuild" depends="clean, build"/>
 
 	<target name="test">
+		<copy file="${moq.dll}" todir="${outdir}"/>
 		<nunit2>
 			<formatter type="Plain"/>
 			<formatter type="Xml" usefile="true" extension=".xml" outputdir="${outdir}"/>
