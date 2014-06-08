@@ -10,6 +10,26 @@ namespace SharpExpress
 {
 	internal static class Extensions
 	{
+		public static T Get<T>(this IDictionary<string, object> data, string key, T defval)
+		{
+			object val;
+			if (!data.TryGetValue(key, out val))
+			{
+				return defval;
+			}
+			return (T)val.ConvertTo(Equals(defval, null) ? typeof(T) : defval.GetType());
+		}
+
+		public static object Get(this IDictionary<string, object> data, string key, object defval, Type valueType)
+		{
+			object val;
+			if (!data.TryGetValue(key, out val))
+			{
+				return defval;
+			}
+			return val.ConvertTo(valueType);
+		}
+
 		public static NameValueCollection ToNameValueCollection(this IEnumerable<KeyValuePair<string, string>> pairs, StringComparer comparer)
 		{
 			var collection = new NameValueCollection(comparer);

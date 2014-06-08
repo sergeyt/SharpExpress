@@ -5,12 +5,10 @@ using System.Web.Services;
 
 namespace SharpExpress
 {
-	// TODO fast method invoke using LINQ expressions or DynamicMethod
-
 	/// <summary>
 	/// Middleware to host web services.
 	/// </summary>
-	public static class WebServiceExtension
+	internal static class WebServiceExtension
 	{
 		public static ExpressApplication WebService<T>(this ExpressApplication app, string urlPrefix)
 		{
@@ -38,9 +36,10 @@ namespace SharpExpress
 		}
 
 		private static void MethodHandler(this ExpressApplication app, string urlPrefix,
-			Func<object> serviceInstance, MethodBase method, WebMethodAttribute meta)
+			Func<object> serviceInstance, MethodInfo method, WebMethodAttribute meta)
 		{
 			// TODO support WebMethodAttribute options (caching, etc)
+			var invoke = DynamicMethods.CompileMethod(method.DeclaringType, method);
 
 			var parameters = method.GetParameters();
 			if (parameters.Length == 0)
@@ -50,7 +49,7 @@ namespace SharpExpress
 					req =>
 					{
 						req.SetContext();
-						var result = method.Invoke(serviceInstance(), new object[0]);
+						var result = invoke(serviceInstance(), new object[0]);
 						req.Json(result);
 					});
 			}
@@ -62,7 +61,7 @@ namespace SharpExpress
 					{
 						req.SetContext();
 						var args = ParseQueryArgs(req, parameters);
-						var result = method.Invoke(serviceInstance(), args);
+						var result = invoke(serviceInstance(), args);
 						req.Json(result);
 					});
 
@@ -72,7 +71,7 @@ namespace SharpExpress
 					{
 						req.SetContext();
 						var args = ParseArgs(req, parameters);
-						var result = method.Invoke(serviceInstance(), args);
+						var result = invoke(serviceInstance(), args);
 						req.Json(result);
 					});
 			}
@@ -94,7 +93,7 @@ namespace SharpExpress
 			return args;
 		}
 
-		private static object[] ParseArgs(RequestContext req, ParameterInfo[] parameters)
+		public static object[] ParseArgs(this RequestContext req, ParameterInfo[] parameters)
 		{
 			var dictionary = req.ParseJson();
 			var args = new object[parameters.Length];

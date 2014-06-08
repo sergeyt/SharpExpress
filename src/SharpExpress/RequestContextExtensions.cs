@@ -94,11 +94,20 @@ namespace SharpExpress
 
 		public static T ParseJson<T>(this RequestContext req)
 		{
+			return ParseJson<T>(req, null);
+		}
+
+		public static T ParseJson<T>(this RequestContext req, JavaScriptTypeResolver resolver)
+		{
 			using (var reader = new StreamReader(req.HttpContext.Request.InputStream))
 			{
-				var json = reader.ReadToEnd();
-				var serializer = new JavaScriptSerializer();
-				return serializer.Deserialize<T>(json);
+				var s = reader.ReadToEnd();
+				if (typeof(T) == typeof(string))
+				{
+					return (T)(object)s;
+				}
+				var serializer = new JavaScriptSerializer(resolver);
+				return serializer.Deserialize<T>(s);
 			}
 		}
 	}

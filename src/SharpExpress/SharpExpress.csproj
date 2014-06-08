@@ -58,6 +58,7 @@
     <Compile Include="AppHost.cs" />
     <Compile Include="ConvertExtension.cs" />
     <Compile Include="CorsExtension.cs" />
+    <Compile Include="DynamicMethods.cs" />
     <Compile Include="EmbeddedExtension.cs" />
     <Compile Include="ExpressFunctionalExtensions.cs" />
     <Compile Include="Extensions.cs" />
@@ -85,10 +86,12 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="HttpRequestImpl.cs" />
     <Compile Include="HttpResponseImpl.cs" />
+    <Compile Include="RestExtension.cs" />
     <Compile Include="ServerImpl.cs" />
     <Compile Include="SocketExtensions.cs" />
     <Compile Include="HttpContextImpl.cs" />
     <Compile Include="TcpListenerImpl.cs" />
+    <Compile Include="Tests\DynamicMethodsTests.cs" />
     <Compile Include="Tests\ExpressApplicationTests.cs" />
     <Compile Include="Tests\ParseTests.cs" />
     <Compile Include="WebServiceExtension.cs" />
