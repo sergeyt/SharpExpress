@@ -3,7 +3,6 @@ obj
 build
 packages
 gh-pages
-.nuget
 
 *.suo
 *.user
