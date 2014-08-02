@@ -1,6 +1,7 @@
 [![Build Status](https://drone.io/github.com/sergeyt/SharpExpress/status.png)](https://drone.io/github.com/sergeyt/SharpExpress/latest)
 [![Build status](https://ci.appveyor.com/api/projects/status/c3ji8hbtc8qgu62v)](https://ci.appveyor.com/project/sergeyt/sharpexpress)
-[![NuGet version](https://badge.fury.io/nu/SharpExpress.png)](http://badge.fury.io/nu/SharpExpress)
+[![NuGet Version](http://img.shields.io/nuget/v/SharpExpress.svg?style=flat)](https://www.nuget.org/packages/SharpExpress/)
+[![NuGet Downloads](http://img.shields.io/nuget/dt/SharpExpress.svg?style=flat)](https://www.nuget.org/packages/SharpExpress/)
 
 # SharpExpress
 
