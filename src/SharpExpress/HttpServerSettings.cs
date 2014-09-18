@@ -5,8 +5,7 @@ namespace SharpExpress
 	public enum HttpServerMode
 	{
 		TcpListener,
-		HttpListener,
-		Pipes
+		HttpListener
 	}
 
 	public sealed class HttpServerSettings

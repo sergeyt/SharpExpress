@@ -75,7 +75,6 @@
     <Compile Include="MultiHttpHandler.cs" />
     <Compile Include="NestExtension.cs" />
     <Compile Include="ParseExtensions.cs" />
-    <Compile Include="PipeListener.cs" />
     <Compile Include="ProcessRequestExtension.cs" />
     <Compile Include="Properties\CommonAssemblyInfo.cs" />
     <Compile Include="HttpRequestBaseImpl.cs" />

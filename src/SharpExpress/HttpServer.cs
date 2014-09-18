@@ -32,9 +32,6 @@ namespace SharpExpress
 				case HttpServerMode.HttpListener:
 					listener = new HttpListenerImpl(app, settings);
 					break;
-				case HttpServerMode.Pipes:
-					listener = new PipeListener(app, settings);
-					break;
 				default:
 					throw new ArgumentOutOfRangeException();
 			}

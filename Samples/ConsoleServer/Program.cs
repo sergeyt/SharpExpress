@@ -54,10 +54,6 @@ namespace ConsoleServer
 					settings.Mode = HttpServerMode.HttpListener;
 					break;
 
-				case "pipe":
-					settings.Mode = HttpServerMode.Pipes;
-					break;
-
 				default:
 					settings.Mode = HttpServerMode.TcpListener;
 					break;
