@@ -13,7 +13,7 @@ namespace SharpExpress.Tests
 		[TestCase("?name1=val1&name2=val2", Result = "[name1][val1];[name2][val2]")]
 		public static string ParseQueryString(string qs)
 		{
-			var pairs = qs.ParseQueryString().ToArray();
+			var pairs = QueryString.Parse(qs).ToArray();
 			return string.Join(";", (from p in pairs select "[" + p.Key + "]" + "[" + p.Value + "]").ToArray());
 		}
 	}

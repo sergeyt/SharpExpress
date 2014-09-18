@@ -1,12 +1,17 @@
 using System;
+using System.Collections.Specialized;
+using System.IO;
 
 namespace SharpExpress
 {
 	internal interface IHttpChannel
 	{
-		HttpStream Receive();
-
-		void Send(byte[] packet);
+		string Path { get; }
+		string Method { get; }
+		NameValueCollection Headers { get; }
+		Stream Body { get; }
+		
+		void Send(byte[] response);
 	}
 
 	internal interface IHttpListener

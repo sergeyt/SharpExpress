@@ -159,7 +159,7 @@ namespace SharpExpress
 			{
 				if (_queryString == null && Url != null)
 				{
-					_queryString = Url.Query.ParseQueryString().ToNameValueCollection(StringComparer.OrdinalIgnoreCase);
+					_queryString = SharpExpress.QueryString.Parse(Url.Query).ToNameValueCollection(StringComparer.OrdinalIgnoreCase);
 				}
 				return _queryString;
 			}

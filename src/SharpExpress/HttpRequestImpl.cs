@@ -12,42 +12,24 @@ namespace SharpExpress
 	internal sealed class HttpRequestImpl : HttpRequestBaseImpl
 	{
 		private readonly HttpContextImpl _context;
-		private readonly string _protocol;
 			
 		public HttpRequestImpl(HttpContextImpl context, IHttpChannel channel, HttpServerSettings settings)
 		{
 			_context = context;
 
-			var stream = channel.Receive();
-			var header = stream.ReadHeader();
+			Method = channel.Method;
 
-			var baseUri = String.Format("http://localhost:{0}", settings.Port);
-
-			if (header.Length > 0)
-			{
-				var firstLine = header[0].Split(' ');
-				Method = firstLine[0];
-				Uri = new Uri(baseUri + firstLine[1]);
-				_protocol = firstLine.Length == 3 ? firstLine[2] : "HTTP/1.0";
-			}
-			else
-			{
-				Method = "GET";
-				Uri = new Uri(baseUri + "/404");
-				_protocol = "HTTP/1.0";
-			}
+			var path = channel.Path;
+			if (!path.StartsWith("/")) path = "/" + path;
+			Uri = new Uri(string.Format("http://localhost:{0}{1}", settings.Port, path));
 
 			_headers.AddRange(
-				from l in header.Skip(1)
-				let i = l.IndexOf(':')
-				where i >= 0
-				let key = l.Substring(0, i).Trim()
-				let val = l.Substring(i + 1).Trim()
-				select new KeyValuePair<string, string>(key, val)
+				from key in channel.Headers.AllKeys
+				select new KeyValuePair<string, string>(key, channel.Headers[key])
 				);
 
 			var len = _headers.GetContentLength();
-			Body = len > 0 ? (Stream) stream : new MemoryStream(new byte[0], false);
+			Body = len > 0 ? channel.Body : new MemoryStream(new byte[0], false);
 		}
 
 		public override bool IsAuthenticated

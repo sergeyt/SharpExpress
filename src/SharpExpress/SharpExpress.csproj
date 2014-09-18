@@ -66,7 +66,6 @@
     <Compile Include="HttpHandlerExtension.cs" />
     <Compile Include="HttpListenerImpl.cs" />
     <Compile Include="HttpServerSettings.cs" />
-    <Compile Include="HttpStream.cs" />
     <Compile Include="HttpWorkerRequestImpl.cs" />
     <Compile Include="InternalInterfaces.cs" />
     <Compile Include="Interfaces.cs" />
@@ -74,7 +73,7 @@
     <Compile Include="MimeType.cs" />
     <Compile Include="MultiHttpHandler.cs" />
     <Compile Include="NestExtension.cs" />
-    <Compile Include="ParseExtensions.cs" />
+    <Compile Include="QueryString.cs" />
     <Compile Include="ProcessRequestExtension.cs" />
     <Compile Include="Properties\CommonAssemblyInfo.cs" />
     <Compile Include="HttpRequestBaseImpl.cs" />
@@ -92,6 +91,7 @@
     <Compile Include="TcpListenerImpl.cs" />
     <Compile Include="Tests\DynamicMethodsTests.cs" />
     <Compile Include="Tests\ExpressApplicationTests.cs" />
+    <Compile Include="Tests\HttpServerTests.cs" />
     <Compile Include="Tests\ParseTests.cs" />
     <Compile Include="WebServiceExtension.cs" />
     <Compile Include="StaticExtension.cs" />
