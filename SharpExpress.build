@@ -3,7 +3,7 @@
 
 	<property name="rootdir" value="${project::get-base-directory()}"/>
 	<property name="srcdir" value="${rootdir}/src/SharpExpress"/>
-	
+
 	<!-- input properties -->
 	<property name="buildroot" value="${rootdir}/build" unless="${property::exists('buildroot')}"/>
 	<property name="runtime" value="clr" unless="${property::exists('runtime')}"/>
@@ -17,7 +17,7 @@
 		<property name="define" value="DEBUG"/>
 		<property name="config" value="debug"/>
 	</if>
-	
+
 	<property name="outdir" value="${buildroot}/${config}"/>
 
 	<property name="nant.settings.currentframework" value="net-3.5" />
@@ -46,17 +46,18 @@
 		<property name="debug" value="Full"/>
 		<property name="outdir" value="${buildroot}/${config}"/>
 	</target>
-	
+
 	<target name="nunit">
 		<property name="config" value="${config}-nunit"/>
 		<property name="define" value="${define};NUNIT"/>
 		<property name="outdir" value="${buildroot}/${config}"/>
 	</target>
 
-	<!-- TODO read from packages.config -->
-	<property name="nunit.framework.dll" value="${rootdir}/packages/NUnit.2.6.3/lib/nunit.framework.dll"/>
-	<property name="moq.dll" value="${rootdir}/packages/Moq.4.2.1402.2112/lib/net35/moq.dll"/>
-	
+	<patternset id="deps">
+		<include name="${rootdir}/packages/NUnit.*/lib/nunit.framework.dll"/>
+		<include name="${rootdir}/packages/Moq.*/lib/net35/moq.dll"/>
+	</patternset>
+
 	<target name="build">
 		<csc target="library" output="${outdir}/${assembly}.dll"
 			 debug="${debug}" define="${define}"
@@ -70,8 +71,7 @@
 				<include name="System.Web.Abstractions.dll"/>
 				<include name="System.Web.Routing.dll"/>
 				<include name="System.Web.Services.dll"/>
-				<include name="${nunit.framework.dll}"/>
-				<include name="${moq.dll}"/>
+				<patternset refid="deps"/>
 			</references>
 			<sources basedir="${srcdir}">
 				<include name="**/*.cs"/>
@@ -92,17 +92,16 @@
 	<target name="rebuild" depends="clean, build"/>
 
 	<target name="test">
-		<copy file="${moq.dll}" todir="${outdir}"/>
 		<nunit2>
 			<formatter type="Plain"/>
 			<formatter type="Xml" usefile="true" extension=".xml" outputdir="${outdir}"/>
 			<test>
 				<assemblies>
 					<include name="${outdir}/${assembly}.dll"/>
-			 	</assemblies>	
-			 	<references>
-			 		<include name="${nunit.framework.dll}"/>
-			 	</references>
+				</assemblies>
+				<references>
+					<patternset refid="deps"/>
+				</references>
 			</test>
 		</nunit2>
 	</target>
