@@ -85,7 +85,6 @@
     <Compile Include="HttpRequestImpl.cs" />
     <Compile Include="HttpResponseImpl.cs" />
     <Compile Include="RestExtension.cs" />
-    <Compile Include="ServerImpl.cs" />
     <Compile Include="SocketExtensions.cs" />
     <Compile Include="HttpContextImpl.cs" />
     <Compile Include="TcpListenerImpl.cs" />
