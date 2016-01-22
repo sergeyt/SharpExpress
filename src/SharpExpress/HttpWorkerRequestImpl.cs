@@ -12,6 +12,8 @@ namespace SharpExpress
 	{
 		private readonly HttpListenerContext _listenerContext;
 		private readonly HttpContextBase _context;
+		private readonly string _url;
+		private readonly int _localPort;
 
 		private static string TrimQuery(string s)
 		{
@@ -27,6 +29,8 @@ namespace SharpExpress
 		{
 			_listenerContext = context;
 			_context = new HttpListenerContextImpl(context, settings);
+			_url = context.Request.Url.ToString();
+			_localPort = settings.Port;
 		}
 
 		public HttpWorkerRequestImpl(HttpContextBase context, HttpServerSettings settings)
@@ -36,6 +40,8 @@ namespace SharpExpress
 				null)
 		{
 			_context = context;
+			_url = context.Request.Url.ToString();
+			_localPort = settings.Port;
 		}
 
 		public override string GetHttpVerbName()
@@ -86,7 +92,7 @@ namespace SharpExpress
 			{
 				return LocalEndPoint.Port;
 			}
-			return base.GetLocalPort();
+			return _localPort;
 		}
 
 		public override void SendStatus(int statusCode, string statusDescription)
@@ -138,6 +144,12 @@ namespace SharpExpress
 		public override int ReadEntityBody(byte[] buffer, int size)
 		{
 			return _context.Request.InputStream.Read(buffer, 0, size);
+		}
+
+		public override string GetRawUrl()
+		{
+			var rawUrl = base.GetRawUrl();
+			return rawUrl;
 		}
 	}
 }

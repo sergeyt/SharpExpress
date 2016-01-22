@@ -54,14 +54,19 @@ namespace SharpExpress
 				return impl.HttpContext;
 			}
 
-			return new HttpContext(new HttpWorkerRequestImpl(
-				context,
-				// TODO fix
-				new HttpServerSettings
-				{
-					VirtualDir = "/",
-					PhisycalDir = Environment.CurrentDirectory
-				}));
+			var settings = new HttpServerSettings
+			{
+				VirtualDir = "/",
+				PhisycalDir = Environment.CurrentDirectory
+			};
+
+			var impl2 = context as HttpContextImpl;
+			if (impl2 != null)
+			{
+				settings = impl2.ServerSettings;
+			}
+
+			return new HttpContext(new HttpWorkerRequestImpl(context, settings));
 		}
 	}
 }

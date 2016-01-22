@@ -7,10 +7,10 @@ namespace SharpExpress.Tests
 	[TestFixture]
 	public class ParseTests
 	{
-		[TestCase("name=value", Result = "[name][value]")]
-		[TestCase("?name=value", Result = "[name][value]")]
-		[TestCase("name1=val1&name2=val2", Result = "[name1][val1];[name2][val2]")]
-		[TestCase("?name1=val1&name2=val2", Result = "[name1][val1];[name2][val2]")]
+		[TestCase("name=value", ExpectedResult = "[name][value]")]
+		[TestCase("?name=value", ExpectedResult = "[name][value]")]
+		[TestCase("name1=val1&name2=val2", ExpectedResult = "[name1][val1];[name2][val2]")]
+		[TestCase("?name1=val1&name2=val2", ExpectedResult = "[name1][val1];[name2][val2]")]
 		public static string ParseQueryString(string qs)
 		{
 			var pairs = QueryString.Parse(qs).ToArray();

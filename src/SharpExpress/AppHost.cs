@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Configuration;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -38,14 +40,28 @@ namespace SharpExpress
 		{
 			try
 			{
+				// very hacky way to initialize ASP.NET runtime inside same app domain
+
+				var appSettings = ConfigurationManager.AppSettings;
+				Debug.Assert(appSettings != null);
+
+				var cfg = typeof(ConfigurationManager).GetStaticField("s_configSystem");
+
 				var env = new HostingEnvironment();
+
+				var configSystem = env.GetType().Assembly.GetType("System.Web.Configuration.HttpConfigurationSystem", false);
+
+				var cfgsys = cfg.GetField("_configSystem");
+				configSystem.SetStaticField("s_configSystem", cfgsys);
+				configSystem.SetStaticField("s_configRoot", cfgsys.GetField("_configRoot"));
+				configSystem.SetStaticField("s_inited", true);
 
 				var type = env.GetType();
 				var init = type
 					.GetMethods(BindingFlags.Instance | BindingFlags.NonPublic)
 					.FirstOrDefault(m => m.Name == "Initialize");
 
-				var args = new object[init.GetParameters().Length];
+				var args = (from p in init.GetParameters() select GetDefaultValue(p.ParameterType)).ToArray();
 				args[0] = ApplicationManager.GetApplicationManager();
 				args[1] = this;
 				args[2] = GetConfigMapPathFactory();
@@ -56,6 +72,11 @@ namespace SharpExpress
 			{
 				Console.WriteLine(e);
 			}
+		}
+
+		private static object GetDefaultValue(Type type)
+		{
+			return type.IsValueType ? Activator.CreateInstance(type) : null;
 		}
 
 		public static void InitDomain(HttpServerSettings settings)
@@ -200,6 +221,35 @@ namespace SharpExpress
 			// FIXME: getting FileLoadException Could not load file or assembly 'WebDev.WebServer20, Version=4.0.1.6, Culture=neutral, PublicKeyToken=f7f6e0b4240c7c27' or one of its dependencies. Failed to grant permission to execute. (Exception from HRESULT: 0x80131418)
 			// when running dnoa 3.4 samples - webdev is registering trust somewhere that we are not
 			return applicationManager.CreateObject(appId, hostType, virtualPath, physicalPath, false);
+		}
+	}
+
+	internal static class ReflectionExt
+	{
+		public static object GetField(this object obj, string name)
+		{
+			var type = obj.GetType();
+			var field = type.GetField(name, BindingFlags.NonPublic | BindingFlags.Instance);
+			return field.GetValue(obj);
+		}
+
+		public static void SetField(this object obj, string name, object value)
+		{
+			var type = obj.GetType();
+			var field = type.GetField(name, BindingFlags.NonPublic | BindingFlags.Instance);
+			field.SetValue(obj, value);
+		}
+
+		public static object GetStaticField(this Type type, string name)
+		{
+			var field = type.GetField(name, BindingFlags.NonPublic | BindingFlags.Static);
+			return field.GetValue(null);
+		}
+
+		public static void SetStaticField(this Type type, string name, object value)
+		{
+			var field = type.GetField(name, BindingFlags.NonPublic | BindingFlags.Static);
+			field.SetValue(null, value);
 		}
 	}
 }

@@ -12,9 +12,12 @@ namespace SharpExpress
 
 		public HttpContextImpl(IHttpChannel channel, HttpServerSettings settings)
 		{
+			ServerSettings = settings;
 			_request = new HttpRequestImpl(this, channel, settings);
 			_response = new HttpResponseImpl(channel);
 		}
+
+		public HttpServerSettings ServerSettings { get; private set; }
 
 		public override HttpRequestBase Request
 		{
