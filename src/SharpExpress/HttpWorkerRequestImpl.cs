@@ -79,11 +79,12 @@ namespace SharpExpress
 
 		public override string GetLocalAddress()
 		{
-			if (LocalEndPoint != null)
-			{
-				return LocalEndPoint.Address.ToString();
-			}
-			return base.GetLocalAddress();
+//			if (LocalEndPoint != null)
+//			{
+//				return LocalEndPoint.Address.ToString();
+//			}
+//			return base.GetLocalAddress();
+			return "localhost";
 		}
 
 		public override int GetLocalPort()

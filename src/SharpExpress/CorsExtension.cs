@@ -5,20 +5,15 @@
 	/// </summary>
 	public static class CorsExtension
 	{
-		public static ExpressApplication EnableCors(this ExpressApplication app, string url)
+		public static ExpressApplication EnableCors(this ExpressApplication app, string route = "{*url}")
 		{
-			return app.Options(url, req =>
+			return app.Options(route, req =>
 			{
 				// TODO config CORS headers
 				// http://enable-cors.org/server_expressjs.html
 				req.HttpContext.Response.AddHeader("Access-Control-Allow-Origin", "*");
 				req.HttpContext.Response.AddHeader("Access-Control-Allow-Headers", "X-Requested-With");
 			});
-		}
-
-		public static ExpressApplication EnableCors(this ExpressApplication app)
-		{
-			return app.EnableCors("{*}");
 		}
 	}
 }
