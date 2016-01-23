@@ -6,21 +6,21 @@ namespace SharpExpress.Tests
 	[TestFixture]
 	public class MimeTypesFixture
 	{
-		[TestCase(".css", ExpectedResult = "text/css")]
-		[TestCase(".html", ExpectedResult = "text/html")]
-		[TestCase(".htm", ExpectedResult = "text/html")]
-		[TestCase(".js", ExpectedResult = "application/javascript")]
-		[TestCase(".json", ExpectedResult = "application/json")]
-		[TestCase(".xml", ExpectedResult = "application/xml")]
-		[TestCase("css", ExpectedResult = "text/css")]
-		[TestCase("html", ExpectedResult = "text/html")]
-		[TestCase("htm", ExpectedResult = "text/html")]
-		[TestCase("js", ExpectedResult = "application/javascript")]
-		[TestCase("json", ExpectedResult = "application/json")]
-		[TestCase("xml", ExpectedResult = "application/xml")]
-		public string ByExtension(string ext)
+		[TestCase(".css", "text/css")]
+		[TestCase(".html", "text/html")]
+		[TestCase(".htm", "text/html")]
+		[TestCase(".js", "application/javascript")]
+		[TestCase(".json", "application/json")]
+		[TestCase(".xml", "application/xml")]
+		[TestCase("css", "text/css")]
+		[TestCase("html", "text/html")]
+		[TestCase("htm", "text/html")]
+		[TestCase("js", "application/javascript")]
+		[TestCase("json", "application/json")]
+		[TestCase("xml", "application/xml")]
+		public void ByExtension(string ext, string expected)
 		{
-			return MimeType.ByExtension(ext);
+			Assert.AreEqual(expected, MimeType.ByExtension(ext));
 		}
 	}
 }
