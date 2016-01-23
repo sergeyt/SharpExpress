@@ -20,9 +20,9 @@
 
 	<property name="outdir" value="${buildroot}/${config}"/>
 
-	<property name="nant.settings.currentframework" value="net-3.5" />
+	<property name="nant.settings.currentframework" value="net-4.5" />
 	<if test="${runtime == 'mono'}">
-		<property name="nant.settings.currentframework" value="mono-3.5" />
+		<property name="nant.settings.currentframework" value="mono-4.5" />
 	</if>
 
 	<target name="default">
@@ -54,8 +54,8 @@
 	</target>
 
 	<patternset id="deps">
-		<include name="${rootdir}/packages/NUnit.*/lib/nunit.framework.dll"/>
-		<include name="${rootdir}/packages/Moq.*/lib/net35/moq.dll"/>
+		<include name="${rootdir}/packages/NUnit.*/lib/net45/nunit.framework.dll"/>
+		<include name="${rootdir}/packages/Moq.*/lib/net40/moq.dll"/>
 	</patternset>
 
 	<target name="build">

@@ -2,14 +2,14 @@
 <package>
 	<metadata>
 		<id>SharpExpress</id>
-		<version>0.5.4.0</version>
+		<version>0.6.0.0</version>
 		<authors>Sergey Todyshev (stodyshev@gmail.com)</authors>
 		<owners>Sergey Todyshev</owners>
 		<licenseUrl>http://opensource.org/licenses/MIT</licenseUrl>
 		<projectUrl>https://github.com/sergeyt/SharpExpress</projectUrl>
 		<requireLicenseAcceptance>false</requireLicenseAcceptance>
 		<description>Functional API to process HTTP requests with ASP.NET MVC-like routing inspired by express.js</description>
-		<copyright>Copyright 2014</copyright>
+		<copyright>Copyright © 2016 Sergey Todyshev. All rights reserved.</copyright>
 		<tags>web http routing server</tags>
 		<frameworkAssemblies>
 			<frameworkAssembly assemblyName="System.Xml"/>
@@ -22,8 +22,6 @@
 		</frameworkAssemblies>
 	</metadata>
 	<files>
-		<file src="build/release/SharpExpress.dll" target="lib/net35"/>
-		<file src="build/release/SharpExpress.dll" target="lib/net40"/>
 		<file src="build/release/SharpExpress.dll" target="lib/net45"/>
 	</files>
 </package>

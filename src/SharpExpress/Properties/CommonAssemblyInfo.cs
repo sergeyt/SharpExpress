@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 
 [assembly: AssemblyProduct(AssemblyInfo.ProductName)]
 [assembly: AssemblyCompany(AssemblyInfo.CompanyName)]
-[assembly: AssemblyCopyright("Copyright © 2014 Sergey Todyshev. All rights reserved.")]
+[assembly: AssemblyCopyright("Copyright © 2016 Sergey Todyshev. All rights reserved.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCulture("")]
 [assembly: AssemblyVersionAttribute(AssemblyInfo.Version)]
@@ -18,5 +18,5 @@ internal static class AssemblyInfo
 {
 	public const string ProductName = "SharpExpress";
 	public const string CompanyName = "TsvBits";
-	public const string Version = "0.5.4.0";
+	public const string Version = "0.6.0.0";
 }
