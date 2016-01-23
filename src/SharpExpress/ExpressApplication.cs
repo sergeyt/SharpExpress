@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -112,13 +113,37 @@ namespace SharpExpress
 
 		#region IHttpHandler Impl
 
+		public bool LogEnabled { get; set; }
+
 		public bool Process(HttpContextBase context)
 		{
 			if (context == null) throw new ArgumentNullException("context");
 
 			if (context.Request == null)
-				return false;
+				return false; // unit test?
 
+			var method = context.Request.HttpMethod;
+			var path = context.Request.Url.PathAndQuery;
+			var stopwatch = new Stopwatch();
+			stopwatch.Start();
+
+			try
+			{
+				return ProcessImpl(context);
+			}
+			finally
+			{
+				if (LogEnabled)
+				{
+					stopwatch.Stop();
+					var status = context.Response.StatusCode;
+					Console.WriteLine("{0} {1} - {2} in {3}ms", method, path, status, stopwatch.Elapsed.Milliseconds);
+				}
+			}
+		}
+
+		private bool ProcessImpl(HttpContextBase context)
+		{
 			if (string.IsNullOrEmpty(context.Request.HttpMethod))
 				return false;
 
