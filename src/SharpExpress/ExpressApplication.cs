@@ -137,7 +137,7 @@ namespace SharpExpress
 				{
 					stopwatch.Stop();
 					var status = context.Response.StatusCode;
-					Console.WriteLine("{0} {1} - {2} in {3}ms", method, path, status, stopwatch.Elapsed.Milliseconds);
+					Console.WriteLine("{0} {1} - {2} in {3}ms", method, path, status, stopwatch.Elapsed.TotalMilliseconds);
 				}
 			}
 		}
